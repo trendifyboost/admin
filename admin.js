@@ -1,24 +1,33 @@
 // Add Customer Functionality
 document.getElementById("add-customer-button").addEventListener("click", () => {
-  const name = document.getElementById("customer-name").value;
-  const pageName = document.getElementById("page-name").value;
-  const packageName = document.getElementById("package-name").value;
+  const name = document.getElementById("customer-name").value.trim();
+  const pageName = document.getElementById("page-name").value.trim();
+  const packageName = document.getElementById("package-name").value.trim();
   const startDate = document.getElementById("start-date").value;
   const packageDays = parseInt(document.getElementById("package-days").value);
   const packagePrice = parseFloat(document.getElementById("package-price").value);
   const customerPaid = parseFloat(document.getElementById("customer-paid").value);
 
+  // Check if all fields are filled
   if (!name || !pageName || !startDate || !packageDays || !packagePrice || !customerPaid) {
     alert("Please fill in all customer details.");
     return;
   }
 
+  // Calculate remaining amount
   const remaining = packagePrice - customerPaid;
+  
+  // Calculate end date
   const endDate = new Date(startDate);
   endDate.setDate(endDate.getDate() + packageDays);
 
-  const customerRef = ref(db, `customers/${name}`);
-  
+  // Make sure the name is URL-safe (replace spaces or special characters)
+  const safeName = name.replace(/[^a-zA-Z0-9]/g, "_");
+
+  // Reference to the customer data in the Firebase Realtime Database
+  const customerRef = ref(db, `customers/${safeName}`);
+
+  // Save data to Firebase Realtime Database
   set(customerRef, {
     pageName,
     packageName,
@@ -27,14 +36,15 @@ document.getElementById("add-customer-button").addEventListener("click", () => {
     packagePrice,
     customerPaid,
     remaining,
-    endDate: endDate.toISOString().split("T")[0]
+    endDate: endDate.toISOString().split("T")[0] // Format the end date as YYYY-MM-DD
   })
     .then(() => {
-  alert("Customer added successfully!");
-  location.reload();
-})
-.catch(error => {
-  console.error("Error adding customer:", error);
+      alert("Customer added successfully!");
+      location.reload(); // Reload the page after successful addition
+    })
+    .catch(error => {
+      console.error("Error adding customer:", error);
+    });
 });
 
 // Delete Customer
@@ -74,6 +84,8 @@ get(customersRef)
 
         customerList.appendChild(row);
       });
+    } else {
+      console.log("No customers found in the database.");
     }
   })
   .catch(error => console.error("Error fetching customers:", error));
