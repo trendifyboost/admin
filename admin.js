@@ -25,7 +25,6 @@ document.getElementById("add-customer-button").addEventListener("click", () => {
   const packagePrice = parseFloat(document.getElementById("package-price").value);
   const customerPaid = parseFloat(document.getElementById("customer-paid").value);
 
-  // Check if all fields are filled
   if (!name || !pageName || !startDate || !packageDays || !packagePrice || !customerPaid) {
     alert("Please fill in all customer details.");
     return;
@@ -51,12 +50,11 @@ document.getElementById("add-customer-button").addEventListener("click", () => {
   })
   .then(() => {
     alert("Customer added successfully!");
-    loadCustomers();  // Refresh customer list
+    location.reload();  // Refresh to see the updated data
   })
   .catch(error => {
     console.error("Error adding customer:", error);
   });
-});
 
 // Delete Customer
 window.deleteCustomer = function (key) {
@@ -69,40 +67,38 @@ window.deleteCustomer = function (key) {
 };
 
 // Fetch and Display All Customers
-function loadCustomers() {
-  const customerList = document.getElementById("customer-list");
-  customerList.innerHTML = "";  // Clear previous content
-  const customersRef = ref(db, "customers");
+const customerList = document.getElementById("customer-list");
+const customersRef = ref(db, "customers");
 
-  get(customersRef)
-    .then(snapshot => {
-      if (snapshot.exists()) {
-        const customers = snapshot.val();
-        Object.keys(customers).forEach(key => {
-          const customer = customers[key];
+get(customersRef)
+  .then(snapshot => {
+    customerList.innerHTML = "";  // Clear previous rows
+    if (snapshot.exists()) {
+      const customers = snapshot.val();
+      Object.keys(customers).forEach(key => {
+        const customer = customers[key];
 
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td>${key}</td>
-            <td>${customer.pageName}</td>
-            <td>${customer.packageName}</td>
-            <td>${customer.startDate}</td>
-            <td>${customer.packageDays}</td>
-            <td>${customer.packagePrice}</td>
-            <td>${customer.customerPaid}</td>
-            <td>${customer.remaining}</td>
-            <td>${customer.endDate}</td>
-            <td><button onclick="deleteCustomer('${key}')">Delete</button></td>
-          `;
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${key}</td>
+          <td>${customer.pageName}</td>
+          <td>${customer.packageName}</td>
+          <td>${customer.startDate}</td>
+          <td>${customer.packageDays}</td>
+          <td>${customer.packagePrice}</td>
+          <td>${customer.customerPaid}</td>
+          <td>${customer.remaining}</td>
+          <td>${customer.endDate}</td>
+          <td><button onclick="deleteCustomer('${key}')">Delete</button></td>
+        `;
 
-          customerList.appendChild(row);
-        });
-      } else {
-        console.log("No customers found in the database.");
-      }
-    })
-    .catch(error => console.error("Error fetching customers:", error));
-}
-
+        customerList.appendChild(row);
+      });
+    } else {
+      console.log("No customers found.");
+    }
+  })
+  .catch(error => console.error("Error fetching customers:", error));
+  
 // Initial Load of Customers
 loadCustomers();
