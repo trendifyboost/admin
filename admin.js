@@ -76,4 +76,3 @@ get(customersRef)
     }
   })
   .catch(error => console.error("Error fetching customers:", error));
-};
