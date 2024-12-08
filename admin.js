@@ -30,10 +30,11 @@ document.getElementById("add-customer-button").addEventListener("click", () => {
     endDate: endDate.toISOString().split("T")[0]
   })
     .then(() => {
-      alert("Customer added successfully!");
-      location.reload();
-    })
-    .catch(error => console.error("Error adding customer:", error));
+  alert("Customer added successfully!");
+  location.reload();
+})
+.catch(error => {
+  console.error("Error adding customer:", error);
 });
 
 // Delete Customer
