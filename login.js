@@ -3,14 +3,15 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebas
 import { getDatabase, ref, get, set, remove, update } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
 
 // Firebase Configuration
-apiKey: "AIzaSyC5JTd88XMPaw8ThV8i4wh8r37uhSuuKiQ",
+const firebaseConfig = {
+  apiKey: "AIzaSyC5JTd88XMPaw8ThV8i4wh8r37uhSuuKiQ",
   authDomain: "trendify-30126.firebaseapp.com",
   databaseURL: "https://trendify-30126-default-rtdb.firebaseio.com",
   projectId: "trendify-30126",
   storageBucket: "trendify-30126.firebasestorage.app",
   messagingSenderId: "816600328899",
   appId: "1:816600328899:web:4b01799c1e82e932451076",
-  measurementId: "G-9QV2QDB3CG
+  measurementId: "G-9QV2QDB3CG"
 };
 
 // Initialize Firebase
