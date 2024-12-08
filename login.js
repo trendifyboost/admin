@@ -1,6 +1,6 @@
 // Import Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-import { getDatabase, ref, get, set, remove, update } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
 
 // Firebase Configuration
 const firebaseConfig = {
@@ -38,13 +38,14 @@ document.getElementById("login-button").addEventListener("click", () => {
         console.log("Retrieved User Data:", userData);
 
         if (userData.password === password) {
-          console.log("Password Match: Login successful!");
-          document.getElementById("login-section").style.display = "none";
-          document.getElementById("admin-panel").style.display = "block";
-        } else {
-          console.log("Password Mismatch: Invalid password!");
-          alert("Invalid password!");
-        }
+  console.log("Password Match: Login successful!");
+  document.getElementById("login-section").style.display = "none";
+  document.getElementById("admin-panel").style.display = "block";
+} else {
+  console.log("Password Mismatch: Invalid password!");
+  alert("Invalid password!"); // এই লাইনটি সঠিকভাবে কাজ করবে
+}
+
       } else {
         console.log("No user found with this username.");
         alert("Username not found in database!");
