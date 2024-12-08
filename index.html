@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Login Section -->
+  <div id="login-section">
+    <h1>Login</h1>
+    <input type="text" id="username" placeholder="Enter Username">
+    <input type="password" id="password" placeholder="Enter Password">
+    <button id="login-button">Login</button>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="admin-panel" style="display:none">
+    <h1>Admin Panel</h1>
+
+    <div id="add-customer-section">
+      <h2>Add Customer</h2>
+      <input type="text" id="customer-name" placeholder="Customer Name">
+      <input type="text" id="page-name" placeholder="Page Name">
+      <select id="package-name">
+        <option value="Boosting">Boosting</option>
+        <option value="Followers">Followers</option>
+        <option value="Likes">Likes</option>
+        <option value="Comments">Comments</option>
+        <option value="Custom Review">Custom Review</option>
+      </select>
+      <input type="date" id="start-date">
+      <input type="number" id="package-days" placeholder="Package Days">
+      <input type="number" id="package-price" placeholder="Package Price">
+      <input type="number" id="customer-paid" placeholder="Customer Paid">
+      <button id="add-customer-button">Add Customer</button>
+    </div>
+
+    <div id="customer-details-section">
+      <h2>All Customers</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Page</th>
+            <th>Package</th>
+            <th>Start Date</th>
+            <th>Days</th>
+            <th>Price</th>
+            <th>Paid</th>
+            <th>Remaining</th>
+            <th>End Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="customer-list"></tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js"></script>
+  <script src="login.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
