@@ -4,76 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Panel</title>
-  
-  <!-- CSS Link -->
-  <link rel="stylesheet" href="style.css">
-  
-  <!-- Firebase Scripts -->
-  <script type="module" src="app.js" defer></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
 </head>
 <body>
-  <h1>Admin Panel</h1>
-  
-  <section id="add-customer">
-    <h2>Add Customer</h2>
-    <form id="customer-form">
-      <label for="customerName">Customer Name:</label>
-      <input type="text" id="customerName" required>
-      
-      <label for="packageName">Package Name:</label>
-      <select id="packageName">
-        <option value="Boosting">Boosting</option>
-        <option value="Followers">Followers</option>
-        <option value="Likes and Comments">Likes and Comments</option>
-        <option value="Custom Review">Custom Review</option>
-      </select>
-      
-      <label for="pageName">Page Name:</label>
-      <input type="text" id="pageName" required>
-      
-      <label for="startDate">Boosting Start Date:</label>
-      <input type="date" id="startDate" required>
-      
-      <label for="packageDuration">Package Duration (days):</label>
-      <input type="number" id="packageDuration" required>
-      
-      <label for="packageCost">Package Cost (৳):</label>
-      <input type="number" id="packageCost" required>
-      
-      <label for="amountPaid">Amount Paid (৳):</label>
-      <input type="number" id="amountPaid" required>
-      
-      <button type="submit" id="addCustomerBtn">Add Customer</button>
-    </form>
-  </section>
-  
-  <section id="customer-details">
-    <h2>Customer Details</h2>
-    <table id="customerTable">
-      <thead>
-        <tr>
-          <th>Customer Name</th>
-          <th>Package Name</th>
-          <th>Page Name</th>
-          <th>Boost Start Date</th>
-          <th>Duration (days)</th>
-          <th>Cost (৳)</th>
-          <th>Paid (৳)</th>
-          <th>Balance (৳)</th>
-          <th>Boost End Date</th>
-          <th>Remaining Days</th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
-  </section>
-  <script>
-    function logout() {
-      localStorage.clear(); // Clear session data
-      window.location.href = 'index.html';
-    }
-  </script>
-  
+  <div class="admin-container">
+    <h2>Welcome to Admin Panel</h2>
+    <p id="admin-welcome"></p>
+    <button id="logoutButton">Logout</button>
+  </div>
+
+  <!-- Include Configuration and Script -->
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
 </body>
 </html>
