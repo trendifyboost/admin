@@ -1,80 +1,81 @@
-/* General Reset */
+/* Reset styles for consistency */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: Arial, sans-serif;
 }
 
-/* Body Styling */
 body {
-  background-color: #f4f4f4;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom, #f5f5f5, #eaeaea);
   color: #333;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
+  line-height: 1.6;
 }
 
-/* Login Section */
-#login-section,
-#admin-panel {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+/* Fullscreen container styling */
+#login-section, #admin-panel {
+  max-width: 100%;
   width: 100%;
-  max-width: 500px;
+  margin: 20px auto;
+  background: #fff;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Headings */
+h1, h2 {
   text-align: center;
-}
-
-#login-section h1,
-#admin-panel h1 {
   margin-bottom: 20px;
-  font-size: 24px;
+  font-weight: bold;
 }
 
-input[type="text"],
-input[type="password"],
-input[type="date"],
-input[type="number"],
-select,
-button {
+/* Inputs, selects, and buttons */
+input, select, button {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
+  margin: 10px 0;
+  padding: 14px;
+  font-size: 16px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 6px;
+}
+
+input:focus, select:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
 }
 
 button {
   background-color: #007bff;
-  color: white;
-  font-size: 16px;
+  color: #fff;
+  font-weight: bold;
+  border: none;
   cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
   background-color: #0056b3;
 }
 
-/* Table Styling */
-#customer-details-section {
-  overflow-x: auto;
-  margin-top: 20px;
+button:focus {
+  outline: none;
 }
 
+/* Table styling */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
-table th,
-table td {
-  border: 1px solid #ddd;
-  padding: 10px;
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 12px;
   text-align: center;
+  font-size: 14px;
 }
 
 table th {
@@ -83,55 +84,97 @@ table th {
 }
 
 table tr:nth-child(even) {
-  background-color: #f2f2f2;
+  background-color: #f9f9f9;
 }
 
-/* Responsive Design */
+table tr:nth-child(odd) {
+  background-color: #fff;
+}
+
+table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Responsive styling */
 @media (max-width: 768px) {
-  #login-section,
-  #admin-panel {
-    width: 95%;
+  body {
+    padding: 10px;
+  }
+
+  #login-section, #admin-panel {
     padding: 15px;
+  }
+
+  input, select, button {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  table th, table td {
+    font-size: 12px;
+    padding: 10px;
   }
 
   h1, h2 {
     font-size: 20px;
   }
-
-  input[type="text"],
-  input[type="password"],
-  input[type="date"],
-  input[type="number"],
-  select,
-  button {
-    font-size: 14px;
-  }
-
-  table th,
-  table td {
-    padding: 8px;
-    font-size: 12px;
-  }
 }
 
 @media (max-width: 480px) {
-  #login-section h1,
-  #admin-panel h1 {
-    font-size: 18px;
+  #login-section, #admin-panel {
+    padding: 10px;
+    margin: 10px;
   }
 
-  button {
+  input, select, button {
     font-size: 14px;
+    padding: 10px;
+  }
+
+  table {
+    font-size: 12px;
+    overflow-x: scroll;
+  }
+
+  table th, table td {
     padding: 8px;
   }
 
-  table th,
-  table td {
-    padding: 5px;
-    font-size: 11px;
+  h1 {
+    font-size: 18px;
   }
+}
 
-  table th {
-    font-size: 12px;
-  }
+/* Loading spinner */
+#customer-list::before {
+  content: "Loading...";
+  display: block;
+  text-align: center;
+  padding: 12px;
+  font-size: 18px;
+  color: #007bff;
+  font-weight: bold;
+}
+
+#logout-button {
+  background-color: #ff4b5c;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+  width: 100%;
+  display: inline-block;
+}
+
+#logout-button:hover {
+  background-color: #e60000;
+}
+
+#logout-button:focus {
+  outline: none;
 }
