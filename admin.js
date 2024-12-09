@@ -1,7 +1,24 @@
+// Firebase Configuration
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCO2KsBx8UVttuQVpePMkDdebLxC1uSI1A",
+  authDomain: "nasimul-islam-dggumx.firebaseapp.com",
+  databaseURL: "https://nasimul-islam-dggumx-default-rtdb.firebaseio.com",
+  projectId: "nasimul-islam-dggumx",
+  storageBucket: "nasimul-islam-dggumx.appspot.com",
+  messagingSenderId: "482637964405",
+  appId: "1:482637964405:web:d6282975958cc1e641c43c"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
 // Add Customer Functionality
 document.getElementById("add-customer-button").addEventListener("click", () => {
-  const name = document.getElementById("customer-name").value;
-  const pageName = document.getElementById("page-name").value;
+  const name = document.getElementById("customer-name").value.trim();
+  const pageName = document.getElementById("page-name").value.trim();
   const packageName = document.getElementById("package-name").value;
   const startDate = document.getElementById("start-date").value;
   const packageDays = parseInt(document.getElementById("package-days").value);
@@ -14,11 +31,13 @@ document.getElementById("add-customer-button").addEventListener("click", () => {
   }
 
   const remaining = packagePrice - customerPaid;
+
   const endDate = new Date(startDate);
   endDate.setDate(endDate.getDate() + packageDays);
 
-  const customerRef = ref(db, `customers/${name}`);
-  
+  const safeName = name.replace(/[^a-zA-Z0-9]/g, "_");
+  const customerRef = ref(db, `customers/${safeName}`);
+
   set(customerRef, {
     pageName,
     packageName,
@@ -29,19 +48,20 @@ document.getElementById("add-customer-button").addEventListener("click", () => {
     remaining,
     endDate: endDate.toISOString().split("T")[0]
   })
-    .then(() => {
-      alert("Customer added successfully!");
-      location.reload();
-    })
-    .catch(error => console.error("Error adding customer:", error));
-});
+  .then(() => {
+    alert("Customer added successfully!");
+    location.reload();  // Refresh to see the updated data
+  })
+  .catch(error => {
+    console.error("Error adding customer:", error);
+  });
 
 // Delete Customer
 window.deleteCustomer = function (key) {
   remove(ref(db, `customers/${key}`))
     .then(() => {
       alert("Customer deleted successfully!");
-      location.reload();
+      loadCustomers();  // Refresh customer list
     })
     .catch(error => console.error("Error deleting customer:", error));
 };
@@ -52,6 +72,7 @@ const customersRef = ref(db, "customers");
 
 get(customersRef)
   .then(snapshot => {
+    customerList.innerHTML = "";  // Clear previous rows
     if (snapshot.exists()) {
       const customers = snapshot.val();
       Object.keys(customers).forEach(key => {
@@ -73,7 +94,11 @@ get(customersRef)
 
         customerList.appendChild(row);
       });
+    } else {
+      console.log("No customers found.");
     }
   })
   .catch(error => console.error("Error fetching customers:", error));
-};
+  
+// Initial Load of Customers
+loadCustomers();
