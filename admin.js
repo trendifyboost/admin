@@ -28,13 +28,17 @@ document.getElementById("add-customer-button").addEventListener("click", () => {
   const packagePrice = parseFloat(document.getElementById("package-price").value);
   const customerPaid = parseFloat(document.getElementById("customer-paid").value);
 
-  if (!name || !pageName || !startDate || !packageDays || !packagePrice || !customerPaid) {
-    alert("Please fill in all customer details.");
+  const button = document.getElementById("add-customer-button");
+
+  // Validate Input Fields
+  if (!name || !pageName || !startDate || isNaN(packageDays) || isNaN(packagePrice) || isNaN(customerPaid)) {
+    alert("Please fill in all customer details correctly.");
     return;
   }
 
-  const remaining = packagePrice - customerPaid;
+  button.disabled = true;  // Disable button to prevent multiple clicks
 
+  const remaining = packagePrice - customerPaid;
   const endDate = new Date(startDate);
   endDate.setDate(endDate.getDate() + packageDays);
 
@@ -49,14 +53,17 @@ document.getElementById("add-customer-button").addEventListener("click", () => {
     packagePrice,
     customerPaid,
     remaining,
-    endDate: endDate.toISOString().split("T")[0]
+    endDate: endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
   })
     .then(() => {
       alert("Customer added successfully!");
-      loadCustomers(); // Updated: Call the loadCustomers function instead of reloading the page
+      loadCustomers();
+      button.disabled = false;  // Re-enable button
     })
     .catch(error => {
       console.error("Error adding customer:", error);
+      alert("An error occurred while adding the customer. Please try again.");
+      button.disabled = false;  // Re-enable button
     });
 });
 
@@ -65,7 +72,7 @@ window.deleteCustomer = function (key) {
   remove(ref(db, `customers/${key}`))
     .then(() => {
       alert("Customer deleted successfully!");
-      loadCustomers(); // Refresh customer list after deletion
+      loadCustomers();
     })
     .catch(error => console.error("Error deleting customer:", error));
 };
@@ -77,9 +84,11 @@ function loadCustomers() {
 
   get(customersRef)
     .then(snapshot => {
-      customerList.innerHTML = ""; // Clear previous rows
+      customerList.innerHTML = "";  // Clear previous rows
+
       if (snapshot.exists()) {
         const customers = snapshot.val();
+
         Object.keys(customers).forEach(key => {
           const customer = customers[key];
 
@@ -101,9 +110,13 @@ function loadCustomers() {
         });
       } else {
         console.log("No customers found.");
+        alert("No customers found in the database.");
       }
     })
-    .catch(error => console.error("Error fetching customers:", error));
+    .catch(error => {
+      console.error("Error fetching customers:", error);
+      alert("An error occurred while fetching customers.");
+    });
 }
 
 // Initial Load of Customers
