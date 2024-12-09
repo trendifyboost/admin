@@ -121,3 +121,16 @@ function loadCustomers() {
 
 // Initial Load of Customers
 loadCustomers();
+
+// Logout Button Functionality
+document.getElementById("logout-button").addEventListener("click", () => {
+  // Perform logout action (you can redirect or clear session/local storage)
+  
+  alert("You have successfully logged out.");
+  
+  // Redirect to login page
+  window.location.href = "login.html";
+  
+  // Alternatively, clear session storage
+  sessionStorage.clear();
+});
