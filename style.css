@@ -12,30 +12,33 @@ body {
   line-height: 1.6;
 }
 
-/* Container styling */
+/* Fullscreen container styling */
 #login-section, #admin-panel {
-  max-width: 800px;
-  margin: 50px auto;
+  max-width: 100%;
+  width: 100%;
+  margin: 20px auto;
   background: #fff;
   padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 /* Headings */
 h1, h2 {
   text-align: center;
   margin-bottom: 20px;
+  font-weight: bold;
 }
 
 /* Inputs, selects, and buttons */
 input, select, button {
   width: 100%;
   margin: 10px 0;
-  padding: 12px;
+  padding: 14px;
   font-size: 16px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 }
 
 input:focus, select:focus {
@@ -46,9 +49,10 @@ input:focus, select:focus {
 button {
   background-color: #007bff;
   color: #fff;
+  font-weight: bold;
   border: none;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 6px;
   transition: background-color 0.3s ease;
 }
 
@@ -68,8 +72,8 @@ table {
 }
 
 table th, table td {
-  border: 1px solid #ddd;
-  padding: 10px;
+  border: 1px solid #ccc;
+  padding: 12px;
   text-align: center;
   font-size: 14px;
 }
@@ -92,10 +96,34 @@ table tr:hover {
 }
 
 /* Responsive styling */
-@media (max-width: 600px) {
-  #login-section, #admin-panel {
-    margin: 20px;
+@media (max-width: 768px) {
+  body {
     padding: 10px;
+  }
+
+  #login-section, #admin-panel {
+    padding: 15px;
+  }
+
+  input, select, button {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  table th, table td {
+    font-size: 12px;
+    padding: 10px;
+  }
+
+  h1, h2 {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  #login-section, #admin-panel {
+    padding: 10px;
+    margin: 10px;
   }
 
   input, select, button {
@@ -103,11 +131,16 @@ table tr:hover {
     padding: 10px;
   }
 
-  table th, table td {
+  table {
     font-size: 12px;
+    overflow-x: scroll;
   }
 
-  h1, h2 {
+  table th, table td {
+    padding: 8px;
+  }
+
+  h1 {
     font-size: 18px;
   }
 }
@@ -117,7 +150,8 @@ table tr:hover {
   content: "Loading...";
   display: block;
   text-align: center;
-  padding: 10px;
-  font-size: 16px;
+  padding: 12px;
+  font-size: 18px;
   color: #007bff;
+  font-weight: bold;
 }
