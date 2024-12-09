@@ -5,54 +5,60 @@
   box-sizing: border-box;
 }
 
+/* General body styling */
 body {
-  font-family: Arial, sans-serif;
-  background: linear-gradient(to bottom, #f5f5f5, #eaeaea);
-  color: #333;
+  font-family: 'Roboto', Arial, sans-serif;
+  background: linear-gradient(to bottom, #f3f4f6, #eaeaea);
+  color: #444;
   line-height: 1.6;
+  padding: 20px;
 }
 
 /* Fullscreen container styling */
 #login-section, #admin-panel {
-  max-width: 100%;
+  max-width: 90%;
   width: 100%;
-  margin: 20px auto;
   background: #fff;
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   border-radius: 12px;
+  margin: 20px auto;
   overflow: hidden;
 }
 
 /* Headings */
 h1, h2 {
   text-align: center;
-  margin-bottom: 20px;
   font-weight: bold;
+  color: #222;
+  margin-bottom: 20px;
 }
 
 /* Inputs, selects, and buttons */
-input, select, button {
+input[type="text"], input[type="password"], select, button {
   width: 100%;
-  margin: 10px 0;
   padding: 14px;
   font-size: 16px;
   border: 1px solid #ccc;
-  border-radius: 6px;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-family: inherit;
 }
 
+/* Focus state for input fields */
 input:focus, select:focus {
   outline: 2px solid #007bff;
-  outline-offset: 2px;
+  border-color: #007bff;
 }
 
+/* Button styling */
 button {
   background-color: #007bff;
   color: #fff;
   font-weight: bold;
   border: none;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: 8px;
   transition: background-color 0.3s ease;
 }
 
@@ -61,6 +67,29 @@ button:hover {
 }
 
 button:focus {
+  outline: none;
+}
+
+/* Logout button */
+#logout-button {
+  background-color: #ff4b5c;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+  width: 100%;
+}
+
+#logout-button:hover {
+  background-color: #e60000;
+}
+
+#logout-button:focus {
   outline: none;
 }
 
@@ -81,21 +110,18 @@ table th, table td {
 table th {
   background-color: #007bff;
   color: #fff;
+  font-weight: bold;
 }
 
 table tr:nth-child(even) {
   background-color: #f9f9f9;
 }
 
-table tr:nth-child(odd) {
-  background-color: #fff;
-}
-
 table tr:hover {
   background-color: #f1f1f1;
 }
 
-/* Responsive styling */
+/* Responsive styling for tablets and small screens */
 @media (max-width: 768px) {
   body {
     padding: 10px;
@@ -106,20 +132,21 @@ table tr:hover {
   }
 
   input, select, button {
-    font-size: 14px;
+    font-size: 15px;
     padding: 12px;
+  }
+
+  h1, h2 {
+    font-size: 24px;
   }
 
   table th, table td {
     font-size: 12px;
     padding: 10px;
   }
-
-  h1, h2 {
-    font-size: 20px;
-  }
 }
 
+/* Mobile-first adjustments for screens smaller than 480px */
 @media (max-width: 480px) {
   #login-section, #admin-panel {
     padding: 10px;
@@ -131,17 +158,21 @@ table tr:hover {
     padding: 10px;
   }
 
+  h1 {
+    font-size: 20px;
+  }
+
   table {
-    font-size: 12px;
     overflow-x: scroll;
   }
 
   table th, table td {
     padding: 8px;
+    font-size: 12px;
   }
 
-  h1 {
-    font-size: 18px;
+  #logout-button {
+    font-size: 16px;
   }
 }
 
@@ -154,27 +185,4 @@ table tr:hover {
   font-size: 18px;
   color: #007bff;
   font-weight: bold;
-}
-
-#logout-button {
-  background-color: #ff4b5c;
-  color: #fff;
-  font-weight: bold;
-  border: none;
-  padding: 14px;
-  font-size: 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 20px;
-  width: 100%;
-  display: inline-block;
-}
-
-#logout-button:hover {
-  background-color: #e60000;
-}
-
-#logout-button:focus {
-  outline: none;
 }
