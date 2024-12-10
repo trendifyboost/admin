@@ -20,36 +20,32 @@ const db = getDatabase(app);
 
 // Login Functionality
 document.getElementById("login-button").addEventListener("click", () => {
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
-
-  if (!username || !password) {
-    alert("Please enter both username and password!");
-    return;
-  }
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
 
   console.log("Entered Username:", username);
   console.log("Entered Password:", password);
 
-  const usersRef = ref(db, `users/${username}`);
-  console.log("Firebase Reference Path:", `users/${username}`);
+  const usersRef = ref(db, users/${username});
+  console.log("Firebase Reference Path:", users/${username});
 
   get(usersRef)
     .then(snapshot => {
       console.log("Snapshot exists:", snapshot.exists());
-
+      
       if (snapshot.exists()) {
         const userData = snapshot.val();
         console.log("Retrieved User Data:", userData);
 
         if (userData.password === password) {
-          console.log("Password Match: Login successful!");
-          document.getElementById("login-section").style.display = "none";
-          document.getElementById("admin-panel").style.display = "block";
-        } else {
-          console.log("Password Mismatch: Invalid password!");
-          alert("Invalid password!");
-        }
+  console.log("Password Match: Login successful!");
+  document.getElementById("login-section").style.display = "none";
+  document.getElementById("admin-panel").style.display = "block";
+} else {
+  console.log("Password Mismatch: Invalid password!");
+  alert("Invalid password!"); // এই লাইনটি সঠিকভাবে কাজ করবে
+}
+
       } else {
         console.log("No user found with this username.");
         alert("Username not found in database!");
@@ -57,6 +53,5 @@ document.getElementById("login-button").addEventListener("click", () => {
     })
     .catch(error => {
       console.error("Database Error:", error);
-      alert("An error occurred while logging in. Please try again.");
     });
 });
