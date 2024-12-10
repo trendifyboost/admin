@@ -1,6 +1,6 @@
 // Import Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+import { getDatabase, ref, set, get, push, remove } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
 
 // Firebase Configuration
 const firebaseConfig = {
@@ -18,54 +18,49 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Add Customer Functionality
-document.getElementById("add-customer-button").addEventListener("click", () => {
-  const name = document.getElementById("customer-name").value.trim();
-  const pageName = document.getElementById("page-name").value.trim();
-  const packageName = document.getElementById("package-name").value;
-  const startDate = document.getElementById("start-date").value;
-  const packageDays = parseInt(document.getElementById("package-days").value);
-  const packagePrice = parseFloat(document.getElementById("package-price").value);
-  const customerPaid = parseFloat(document.getElementById("customer-paid").value);
+// Add Customer Functionality (New Implementation)
+function addCustomer() {
+  const customerName = document.getElementById('customer-name').value.trim();
+  const pageName = document.getElementById('page-name').value.trim();
+  const packageName = document.getElementById('package-name').value;
+  const startDate = document.getElementById('start-date').value;
+  const packageDays = parseInt(document.getElementById('package-days').value);
+  const packagePrice = parseFloat(document.getElementById('package-price').value);
+  const customerPaid = parseFloat(document.getElementById('customer-paid').value);
 
-  const button = document.getElementById("add-customer-button");
+  if (customerName && pageName && startDate && !isNaN(packageDays) && !isNaN(packagePrice) && !isNaN(customerPaid)) {
+    const remaining = packagePrice - customerPaid;
 
-  // Validate Input Fields
-  if (!name || !pageName || !startDate || isNaN(packageDays) || isNaN(packagePrice) || isNaN(customerPaid)) {
-    alert("Please fill in all customer details correctly.");
-    return;
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + packageDays);
+
+    const newCustomer = {
+      name: customerName,
+      page: pageName,
+      package: packageName,
+      startDate: startDate,
+      packageDays: packageDays,
+      packagePrice: packagePrice,
+      customerPaid: customerPaid,
+      remaining: remaining,
+      endDate: endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    };
+
+    // Push customer data to Firebase database
+    const customersRef = ref(db, 'customers');
+    push(customersRef, newCustomer)
+      .then(() => {
+        alert('Customer added successfully!');
+        loadCustomers(); // Reload the customer list
+      })
+      .catch((error) => {
+        console.error('Error adding customer:', error);
+        alert('Failed to add customer. Please try again.');
+      });
+  } else {
+    alert('Please fill in all required fields correctly.');
   }
-
-  button.disabled = true;  // Disable button to prevent multiple clicks
-
-  const remaining = packagePrice - customerPaid;
-  const endDate = new Date(startDate);
-  endDate.setDate(endDate.getDate() + packageDays);
-
-  const safeName = name.replace(/[^a-zA-Z0-9]/g, "_");
-  const customerRef = ref(db, `customers/${safeName}`);
-
-  set(customerRef, {
-    pageName,
-    packageName,
-    startDate,
-    packageDays,
-    packagePrice,
-    customerPaid,
-    remaining,
-    endDate: endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-  })
-    .then(() => {
-      alert("Customer added successfully!");
-      loadCustomers();
-      button.disabled = false;  // Re-enable button
-    })
-    .catch(error => {
-      console.error("Error adding customer:", error);
-      alert("An error occurred while adding the customer. Please try again.");
-      button.disabled = false;  // Re-enable button
-    });
-});
+}
 
 // Delete Customer Functionality
 window.deleteCustomer = function (key) {
@@ -84,7 +79,7 @@ function loadCustomers() {
 
   get(customersRef)
     .then(snapshot => {
-      customerList.innerHTML = "";  // Clear previous rows
+      customerList.innerHTML = ""; // Clear previous rows
 
       if (snapshot.exists()) {
         const customers = snapshot.val();
@@ -95,8 +90,8 @@ function loadCustomers() {
           const row = document.createElement("tr");
           row.innerHTML = `
             <td>${key}</td>
-            <td>${customer.pageName}</td>
-            <td>${customer.packageName}</td>
+            <td>${customer.page}</td>
+            <td>${customer.package}</td>
             <td>${customer.startDate}</td>
             <td>${customer.packageDays}</td>
             <td>${customer.packagePrice}</td>
@@ -119,18 +114,15 @@ function loadCustomers() {
     });
 }
 
+// Attach Event Listener for Add Customer Button
+document.getElementById("add-customer-button").addEventListener("click", addCustomer);
+
 // Initial Load of Customers
 loadCustomers();
 
 // Logout Button Functionality
 document.getElementById("logout-button").addEventListener("click", () => {
-  // Perform logout action (you can redirect or clear session/local storage)
-  
   alert("You have successfully logged out.");
-  
-  // Redirect to login page
   window.location.href = "login.html";
-  
-  // Alternatively, clear session storage
   sessionStorage.clear();
 });
