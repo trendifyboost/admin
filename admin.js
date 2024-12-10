@@ -130,7 +130,7 @@ function loadCustomers() {
 }
 
 // View Customer Details
-function viewCustomer(key) {
+window.viewCustomer = function (key) {
   const customerRef = ref(db, `customers/${key}`);
 
   get(customerRef)
@@ -140,9 +140,9 @@ function viewCustomer(key) {
         const popupContent = `
           <div class="popup">
             <h2>Customer Details</h2>
-            <p><strong>Name:</strong> ${key}</p>
-            <p><strong>Page:</strong> ${customer.pageName}</p>
-            <p><strong>Package:</strong> ${customer.packageName}</p>
+            <p><strong>Name:</strong> ${customer.name}</p>
+            <p><strong>Page:</strong> ${customer.page}</p>
+            <p><strong>Package:</strong> ${customer.package}</p>
             <p><strong>Start Date:</strong> ${customer.startDate}</p>
             <p><strong>Days:</strong> ${customer.packageDays}</p>
             <p><strong>Price:</strong> ${customer.packagePrice}</p>
@@ -162,7 +162,7 @@ function viewCustomer(key) {
       console.error("Error fetching customer details:", error);
       alert("An error occurred while fetching customer details.");
     });
-}
+};
 
 // Close Popup
 function closePopup() {
