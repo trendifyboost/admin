@@ -165,8 +165,6 @@ function viewCustomerDetails(key) {
 }
 
 
-
-
 // Logout Button Functionality
 document.getElementById("logout-button").addEventListener("click", () => {
   // Perform logout action (you can redirect or clear session/local storage)
