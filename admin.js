@@ -18,7 +18,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Add Customer Functionality (New Implementation)
+// Add Customer Functionality
 function addCustomer() {
   const customerName = document.getElementById('customer-name').value.trim();
   const pageName = document.getElementById('page-name').value.trim();
@@ -72,7 +72,7 @@ window.deleteCustomer = function (key) {
     .catch(error => console.error("Error deleting customer:", error));
 };
 
-// Fetch and Display All Customers
+// Fetch and Display All Customers with Sorting and Indicators
 function loadCustomers() {
   const customerList = document.getElementById("customer-list");
   const customersRef = ref(db, "customers");
@@ -84,23 +84,38 @@ function loadCustomers() {
       if (snapshot.exists()) {
         const customers = snapshot.val();
 
-        Object.keys(customers).forEach(key => {
-          const customer = customers[key];
+        // Convert customers object to array and sort by End Date
+        const sortedCustomers = Object.keys(customers)
+          .map(key => ({ key, ...customers[key] }))
+          .sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
+
+        sortedCustomers.forEach(customer => {
+          const today = new Date();
+          const endDate = new Date(customer.endDate);
+          const isToday = endDate.toDateString() === today.toDateString();
+          const isTomorrow =
+            new Date(endDate).setDate(endDate.getDate() - 1) ===
+            today.setDate(today.getDate());
+
+          let pointColor = "";
+          if (isToday) {
+            pointColor = "red";
+          } else if (isTomorrow) {
+            pointColor = "yellow";
+          }
 
           const row = document.createElement("tr");
           row.innerHTML = `
-            <td>${key}</td>
-            <td>${customer.page}</td>
-            <td>${customer.package}</td>
-            <td>${customer.startDate}</td>
-            <td>${customer.packageDays}</td>
-            <td>${customer.packagePrice}</td>
-            <td>${customer.customerPaid}</td>
-            <td>${customer.remaining}</td>
-            <td>${customer.endDate}</td>
-            <td><button onclick="deleteCustomer('${key}')">Delete</button></td>
+            <td>
+              <span style="color: ${pointColor}; font-size: 20px;">●</span> 
+              ${customer.key}
+            </td>
+            <td>
+              <button onclick="viewCustomer('${customer.key}')">View</button>
+              <button onclick="editCustomer('${customer.key}')">Edit</button>
+              <button onclick="deleteCustomer('${customer.key}')">Delete</button>
+            </td>
           `;
-
           customerList.appendChild(row);
         });
       } else {
@@ -112,6 +127,49 @@ function loadCustomers() {
       console.error("Error fetching customers:", error);
       alert("An error occurred while fetching customers.");
     });
+}
+
+// View Customer Details
+function viewCustomer(key) {
+  const customerRef = ref(db, `customers/${key}`);
+
+  get(customerRef)
+    .then(snapshot => {
+      if (snapshot.exists()) {
+        const customer = snapshot.val();
+        const popupContent = `
+          <div class="popup">
+            <h2>Customer Details</h2>
+            <p><strong>Name:</strong> ${key}</p>
+            <p><strong>Page:</strong> ${customer.pageName}</p>
+            <p><strong>Package:</strong> ${customer.packageName}</p>
+            <p><strong>Start Date:</strong> ${customer.startDate}</p>
+            <p><strong>Days:</strong> ${customer.packageDays}</p>
+            <p><strong>Price:</strong> ${customer.packagePrice}</p>
+            <p><strong>Paid:</strong> ${customer.customerPaid}</p>
+            <p><strong>Payment Due:</strong> ${customer.remaining}</p>
+            <p><strong>End Date:</strong> ${customer.endDate}</p>
+            <button onclick="closePopup()">Close</button>
+          </div>
+        `;
+
+        document.body.insertAdjacentHTML("beforeend", popupContent);
+      } else {
+        alert("Customer not found.");
+      }
+    })
+    .catch(error => {
+      console.error("Error fetching customer details:", error);
+      alert("An error occurred while fetching customer details.");
+    });
+}
+
+// Close Popup
+function closePopup() {
+  const popup = document.querySelector(".popup");
+  if (popup) {
+    popup.remove();
+  }
 }
 
 // Attach Event Listener for Add Customer Button
