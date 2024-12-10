@@ -5,12 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Panel</title>
   <link rel="stylesheet" href="style.css">
-  
-  <!-- Import Firebase -->
-  <script type="module" src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"></script>
-  <script type="module" src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js"></script>
 </head>
-
 <body>
 
   <!-- Login Section -->
@@ -48,126 +43,23 @@
     <div id="customer-details-section">
       <h2>All Customers</h2>
       <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="customer-list"></tbody>
-      </table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody id="customer-list"></tbody>
+</table>
     </div>
 
     <!-- Logout Button -->
     <button id="logout-button">Logout</button>
   </div>
 
-  <!-- Firebase Initialization Script -->
-  <script type="module">
-    // Firebase Configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyC5JTd88XMPaw8ThV8i4wh8r37uhSuuKiQ",
-      authDomain: "trendify-30126.firebaseapp.com",
-      databaseURL: "https://trendify-30126-default-rtdb.firebaseio.com",
-      projectId: "trendify-30126",
-      storageBucket: "trendify-30126.firebasestorage.app",
-      messagingSenderId: "816600328899",
-      appId: "1:816600328899:web:4b01799c1e82e932451076",
-      measurementId: "G-9QV2QDB3CG"
-    };
-
-    // Initialize Firebase
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-    import { getDatabase, ref, push, get, remove } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    // Login Logic
-    const loginButton = document.getElementById('login-button');
-    loginButton.addEventListener('click', () => {
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value;
-
-      if (username === "admin" && password === "adminpass") {
-        document.getElementById('login-section').style.display = "none";
-        document.getElementById('admin-panel').style.display = "block";
-        loadCustomers();
-      } else {
-        alert("Invalid Username or Password");
-      }
-    });
-
-    // Logout Logic
-    const logoutButton = document.getElementById('logout-button');
-    logoutButton.addEventListener('click', () => {
-      alert("Logged out successfully!");
-      window.location.reload();
-    });
-
-    // Add Customer to Firebase
-    const addCustomerButton = document.getElementById('add-customer-button');
-    addCustomerButton.addEventListener('click', () => {
-      const name = document.getElementById('customer-name').value;
-      const pageName = document.getElementById('page-name').value;
-      const packageName = document.getElementById('package-name').value;
-      const startDate = document.getElementById('start-date').value;
-      const packageDays = parseInt(document.getElementById('package-days').value);
-      const packagePrice = parseFloat(document.getElementById('package-price').value);
-      const customerPaid = parseFloat(document.getElementById('customer-paid').value);
-
-      if (name && pageName && startDate && !isNaN(packageDays)) {
-        const remaining = packagePrice - customerPaid;
-
-        const newCustomer = {
-          name,
-          pageName,
-          packageName,
-          startDate,
-          packageDays,
-          packagePrice,
-          customerPaid,
-          remaining
-        };
-
-        const customersRef = ref(db, 'customers');
-        push(customersRef, newCustomer)
-          .then(() => alert('Customer added successfully'))
-          .catch(console.error);
-
-        loadCustomers();
-      } else {
-        alert('Fill out all fields correctly');
-      }
-    });
-
-    // Load Customers from Database
-    const loadCustomers = () => {
-      const customerList = document.getElementById('customer-list');
-      const customersRef = ref(db, "customers");
-
-      get(customersRef).then(snapshot => {
-        if (snapshot.exists()) {
-          customerList.innerHTML = '';
-          Object.entries(snapshot.val()).forEach(([key, customer]) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `<td>${customer.name}</td><td>
-              <button onclick="deleteCustomer('${key}')">Delete</button>
-            </td>`;
-            customerList.appendChild(row);
-          });
-        }
-      });
-    };
-
-    const deleteCustomer = key => {
-      remove(ref(db, `customers/${key}`))
-        .then(() => alert("Customer deleted successfully"))
-        .catch(console.error);
-
-      loadCustomers();
-    };
-  </script>
-
+  <script type="module" src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js"></script>
+  <script type="module" src="login.js"></script>
+  <script type="module" src="admin.js"></script>
 </body>
 </html>
