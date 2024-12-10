@@ -18,7 +18,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Login Functionality
+// Login Button Event Listener
 document.getElementById("login-button").addEventListener("click", () => {
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
@@ -26,26 +26,25 @@ document.getElementById("login-button").addEventListener("click", () => {
   console.log("Entered Username:", username);
   console.log("Entered Password:", password);
 
-  const usersRef = ref(db, users/${username});
-  console.log("Firebase Reference Path:", users/${username});
+  // Corrected Reference Path
+  const usersRef = ref(db, `users/${username}`);
+  console.log("Firebase Reference Path:", `users/${username}`);
 
   get(usersRef)
     .then(snapshot => {
-      console.log("Snapshot exists:", snapshot.exists());
-      
       if (snapshot.exists()) {
         const userData = snapshot.val();
         console.log("Retrieved User Data:", userData);
 
+        // Check if passwords match
         if (userData.password === password) {
-  console.log("Password Match: Login successful!");
-  document.getElementById("login-section").style.display = "none";
-  document.getElementById("admin-panel").style.display = "block";
-} else {
-  console.log("Password Mismatch: Invalid password!");
-  alert("Invalid password!"); // এই লাইনটি সঠিকভাবে কাজ করবে
-}
-
+          console.log("Password Match: Login successful!");
+          document.getElementById("login-section").style.display = "none";
+          document.getElementById("admin-panel").style.display = "block";
+        } else {
+          console.log("Password Mismatch: Invalid password!");
+          alert("Invalid password!");
+        }
       } else {
         console.log("No user found with this username.");
         alert("Username not found in database!");
