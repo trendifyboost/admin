@@ -130,47 +130,40 @@ function loadCustomers() {
 }
 
 // View Customer Details
-window.viewCustomer = function (key) {
+window.editCustomer = function (key) {
   const customerRef = ref(db, `customers/${key}`);
 
   get(customerRef)
     .then(snapshot => {
       if (snapshot.exists()) {
         const customer = snapshot.val();
-        const popupContent = `
-          <div class="popup">
-            <h2>Customer Details</h2>
-            <p><strong>Name:</strong> ${customer.name}</p>
-            <p><strong>Page:</strong> ${customer.page}</p>
-            <p><strong>Package:</strong> ${customer.package}</p>
-            <p><strong>Start Date:</strong> ${customer.startDate}</p>
-            <p><strong>Days:</strong> ${customer.packageDays}</p>
-            <p><strong>Price:</strong> ${customer.packagePrice}</p>
-            <p><strong>Paid:</strong> ${customer.customerPaid}</p>
-            <p><strong>Payment Due:</strong> ${customer.remaining}</p>
-            <p><strong>End Date:</strong> ${customer.endDate}</p>
-            <button onclick="closePopup()">Close</button>
-          </div>
-        `;
 
-        document.body.insertAdjacentHTML("beforeend", popupContent);
+        // Populate form fields with the customer's existing data
+        document.getElementById('customer-name').value = customer.name;
+        document.getElementById('page-name').value = customer.page;
+        document.getElementById('package-name').value = customer.package;
+        document.getElementById('start-date').value = customer.startDate;
+        document.getElementById('package-days').value = customer.packageDays;
+        document.getElementById('package-price').value = customer.packagePrice;
+        document.getElementById('customer-paid').value = customer.customerPaid;
+
+        alert(`Editing customer: ${customer.name}`);
       } else {
-        alert("Customer not found.");
+        alert('Customer not found.');
       }
     })
     .catch(error => {
-      console.error("Error fetching customer details:", error);
-      alert("An error occurred while fetching customer details.");
+      console.error("Error editing customer:", error);
+      alert("An error occurred while editing customer details.");
     });
 };
-
 // Close Popup
-function closePopup() {
+window.closePopup = function() {
   const popup = document.querySelector(".popup");
   if (popup) {
     popup.remove();
   }
-}
+};
 
 // Attach Event Listener for Add Customer Button
 document.getElementById("add-customer-button").addEventListener("click", addCustomer);
