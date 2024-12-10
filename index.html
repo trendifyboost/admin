@@ -8,16 +8,8 @@
 </head>
 <body>
 
-  <!-- Login Section -->
-  <div id="login-section">
-    <h1>Login</h1>
-    <input type="text" id="username" placeholder="Enter Username">
-    <input type="password" id="password" placeholder="Enter Password">
-    <button id="login-button">Login</button>
-  </div>
-
   <!-- Admin Panel -->
-  <div id="admin-panel" style="display:none">
+  <div id="admin-panel">
     <h1>Admin Panel</h1>
 
     <!-- Add Customer Section -->
@@ -46,14 +38,6 @@
         <thead>
           <tr>
             <th>Name</th>
-            <th>Page</th>
-            <th>Package</th>
-            <th>Start Date</th>
-            <th>Days</th>
-            <th>Price</th>
-            <th>Paid</th>
-            <th>Payment Due</th>
-            <th>End Date</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -67,7 +51,6 @@
 
   <script type="module" src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"></script>
   <script type="module" src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js"></script>
-  <script type="module" src="login.js"></script>
   <script type="module" src="admin.js"></script>
 </body>
 </html>
