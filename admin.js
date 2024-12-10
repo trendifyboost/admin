@@ -1,6 +1,6 @@
 // Import Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-import { getDatabase, ref, set, get, push, remove } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
 
 // Firebase Configuration
 const firebaseConfig = {
@@ -18,50 +18,56 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Function to add a customer
-function addCustomer() {
-  const customerName = document.getElementById('customer-name').value.trim();
-  const pageName = document.getElementById('page-name').value.trim();
-  const packageName = document.getElementById('package-name').value;
-  const startDate = document.getElementById('start-date').value;
-  const packageDays = parseInt(document.getElementById('package-days').value);
-  const packagePrice = parseFloat(document.getElementById('package-price').value);
-  const customerPaid = parseFloat(document.getElementById('customer-paid').value);
+// Add Customer Functionality
+document.getElementById("add-customer-button").addEventListener("click", () => {
+  const name = document.getElementById("customer-name").value.trim();
+  const pageName = document.getElementById("page-name").value.trim();
+  const packageName = document.getElementById("package-name").value;
+  const startDate = document.getElementById("start-date").value;
+  const packageDays = parseInt(document.getElementById("package-days").value);
+  const packagePrice = parseFloat(document.getElementById("package-price").value);
+  const customerPaid = parseFloat(document.getElementById("customer-paid").value);
 
-  if (customerName && pageName && startDate && !isNaN(packageDays) && !isNaN(packagePrice) && !isNaN(customerPaid)) {
-    const remaining = packagePrice - customerPaid;
+  const button = document.getElementById("add-customer-button");
 
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + packageDays);
-
-    const newCustomer = {
-      name: customerName,
-      page: pageName,
-      package: packageName,
-      startDate: startDate,
-      packageDays: packageDays,
-      packagePrice: packagePrice,
-      customerPaid: customerPaid,
-      remaining: remaining,
-      endDate: endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-    };
-
-    const customersRef = ref(db, 'customers');
-    push(customersRef, newCustomer)
-      .then(() => {
-        alert('Customer added successfully!');
-        loadCustomers(); // Reload the customer list
-      })
-      .catch((error) => {
-        console.error('Error adding customer:', error);
-        alert('Failed to add customer. Please try again.');
-      });
-  } else {
-    alert('Please fill in all required fields correctly.');
+  // Validate Input Fields
+  if (!name || !pageName || !startDate || isNaN(packageDays) || isNaN(packagePrice) || isNaN(customerPaid)) {
+    alert("Please fill in all customer details correctly.");
+    return;
   }
-}
 
-// Function to delete a customer
+  button.disabled = true;  // Disable button to prevent multiple clicks
+
+  const remaining = packagePrice - customerPaid;
+  const endDate = new Date(startDate);
+  endDate.setDate(endDate.getDate() + packageDays);
+
+  const safeName = name.replace(/[^a-zA-Z0-9]/g, "_");
+  const customerRef = ref(db, `customers/${safeName}`);
+
+  set(customerRef, {
+    pageName,
+    packageName,
+    startDate,
+    packageDays,
+    packagePrice,
+    customerPaid,
+    remaining,
+    endDate: endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  })
+    .then(() => {
+      alert("Customer added successfully!");
+      loadCustomers();
+      button.disabled = false;  // Re-enable button
+    })
+    .catch(error => {
+      console.error("Error adding customer:", error);
+      alert("An error occurred while adding the customer. Please try again.");
+      button.disabled = false;  // Re-enable button
+    });
+});
+
+// Delete Customer Functionality
 window.deleteCustomer = function (key) {
   remove(ref(db, `customers/${key}`))
     .then(() => {
@@ -71,82 +77,105 @@ window.deleteCustomer = function (key) {
     .catch(error => console.error("Error deleting customer:", error));
 };
 
-// Function to load and display customers
+// Fetch and Display All Customers
+
 function loadCustomers() {
   const customerList = document.getElementById("customer-list");
   const customersRef = ref(db, "customers");
 
   get(customersRef)
     .then(snapshot => {
-      customerList.innerHTML = ""; // Clear previous rows
+      customerList.innerHTML = "";
 
       if (snapshot.exists()) {
         const customers = snapshot.val();
 
-        const sortedCustomers = Object.keys(customers)
-          .map(key => ({ key, ...customers[key] }))
-          .sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
+        // Sorting customers by End Date (ascending)
+        const sortedCustomers = Object.entries(customers).sort((a, b) => {
+          return new Date(a[1].endDate) - new Date(b[1].endDate);
+        });
 
-        sortedCustomers.forEach(customer => {
+        sortedCustomers.forEach(([key, customer]) => {
           const row = document.createElement("tr");
+
+          let endDate = new Date(customer.endDate);
+          let today = new Date();
+          let tomorrow = new Date(today);
+          tomorrow.setDate(today.getDate() + 1);
+
+          let dotColor = "";
+          if (endDate.toDateString() === today.toDateString()) {
+            dotColor = "red";
+          } else if (endDate.toDateString() === tomorrow.toDateString()) {
+            dotColor = "yellow";
+          } else {
+            dotColor = "gray";
+          }
+
           row.innerHTML = `
-            <td>${customer.name}</td>
-            <td>${customer.page}</td>
-            <td>${customer.package}</td>
+            <td>${key} <span style="color: ${dotColor}; font-weight: bold;">●</span></td>
+            <td>${customer.pageName}</td>
+            <td>${customer.packageName}</td>
+            <td>${customer.startDate}</td>
+            <td>${customer.packageDays}</td>
+            <td>${customer.packagePrice}</td>
+            <td>${customer.customerPaid}</td>
+            <td>${customer.remaining}</td>
+            <td>${customer.endDate}</td>
             <td>
-              <button onclick="viewCustomer('${customer.key}')">View</button>
-              <button onclick="editCustomer('${customer.key}')">Edit</button>
-              <button onclick="deleteCustomer('${customer.key}')">Delete</button>
+              <button onclick="editCustomer('${key}')">Edit</button>
+              <button onclick="deleteCustomer('${key}')">Delete</button>
+              <button onclick="viewCustomerDetails('${key}')">View</button>
             </td>
           `;
+          
           customerList.appendChild(row);
         });
-      } else {
-        alert("No customers found in the database.");
       }
     })
     .catch(error => console.error("Error fetching customers:", error));
 }
 
-// Function to view customer details in a popup
-window.editCustomer = function (key) {
-  const customerRef = ref(db, `customers/${key}`);
-
-  get(customerRef)
+function viewCustomerDetails(key) {
+  get(ref(db, `customers/${key}`))
     .then(snapshot => {
       if (snapshot.exists()) {
         const customer = snapshot.val();
+        const content = `
+          <div style="padding: 20px; font-family: Arial; line-height: 1.8;">
+            <h2>Customer Details</h2>
+            <p><strong>Name:</strong> ${key}</p>
+            <p><strong>Page:</strong> ${customer.pageName}</p>
+            <p><strong>Package:</strong> ${customer.packageName}</p>
+            <p><strong>Start Date:</strong> ${customer.startDate}</p>
+            <p><strong>Package Duration (Days):</strong> ${customer.packageDays}</p>
+            <p><strong>Price:</strong> ${customer.packagePrice}</p>
+            <p><strong>Paid Amount:</strong> ${customer.customerPaid}</p>
+            <p><strong>Payment Due:</strong> ${customer.remaining}</p>
+            <p><strong>End Date:</strong> ${customer.endDate}</p>
+          </div>
+        `;
 
-        // Populate form fields with the customer's existing data
-        document.getElementById('customer-name').value = customer.name;
-        document.getElementById('page-name').value = customer.page;
-        document.getElementById('package-name').value = customer.package;
-        document.getElementById('start-date').value = customer.startDate;
-        document.getElementById('package-days').value = customer.packageDays;
-        document.getElementById('package-price').value = customer.packagePrice;
-        document.getElementById('customer-paid').value = customer.customerPaid;
-
-        showPopup();
-      } else {
-        alert('Customer not found.');
+        const popup = window.open("", "Customer Details", "width=600,height=400");
+        popup.document.write(content);
+        popup.document.close();
       }
     })
-    .catch(error => console.error("Error editing customer:", error));
-};
-
-// Function to show the popup
-function showPopup() {
-  const popup = document.querySelector(".popup");
-  if (popup) popup.style.display = "block";
+    .catch(console.error);
 }
 
-// Function to close the popup
-window.closePopup = function() {
-  const popup = document.querySelector(".popup");
-  if (popup) popup.style.display = "none";
-};
 
-document.getElementById("add-customer-button").addEventListener("click", addCustomer);
 
-// Load customers on page start
-loadCustomers();
+
+// Logout Button Functionality
+document.getElementById("logout-button").addEventListener("click", () => {
+  // Perform logout action (you can redirect or clear session/local storage)
+  
+  alert("You have successfully logged out.");
+  
+  // Redirect to login page
+  window.location.href = "login.html";
+  
+  // Alternatively, clear session storage
+  sessionStorage.clear();
+});
