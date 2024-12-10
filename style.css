@@ -220,3 +220,42 @@ table tr:hover {
 #add-customer-btn:hover {
   background-color: #218838;
 }
+
+/* Popup Styling */
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  max-width: 400px;
+  width: 90%;
+}
+
+.popup h2 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.popup p {
+  margin: 10px 0;
+}
+
+.popup button {
+  display: block;
+  margin: 15px auto 0;
+  padding: 10px 20px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.popup button:hover {
+  background: #0056b3;
+}
