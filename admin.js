@@ -18,7 +18,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Add Customer Functionality
+// Function to add a customer
 function addCustomer() {
   const customerName = document.getElementById('customer-name').value.trim();
   const pageName = document.getElementById('page-name').value.trim();
@@ -46,7 +46,6 @@ function addCustomer() {
       endDate: endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
     };
 
-    // Push customer data to Firebase database
     const customersRef = ref(db, 'customers');
     push(customersRef, newCustomer)
       .then(() => {
@@ -62,7 +61,7 @@ function addCustomer() {
   }
 }
 
-// Delete Customer Functionality
+// Function to delete a customer
 window.deleteCustomer = function (key) {
   remove(ref(db, `customers/${key}`))
     .then(() => {
@@ -72,7 +71,7 @@ window.deleteCustomer = function (key) {
     .catch(error => console.error("Error deleting customer:", error));
 };
 
-// Fetch and Display All Customers with Sorting and Indicators
+// Function to load and display customers
 function loadCustomers() {
   const customerList = document.getElementById("customer-list");
   const customersRef = ref(db, "customers");
@@ -84,32 +83,16 @@ function loadCustomers() {
       if (snapshot.exists()) {
         const customers = snapshot.val();
 
-        // Convert customers object to array and sort by End Date
         const sortedCustomers = Object.keys(customers)
           .map(key => ({ key, ...customers[key] }))
           .sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
 
         sortedCustomers.forEach(customer => {
-          const today = new Date();
-          const endDate = new Date(customer.endDate);
-          const isToday = endDate.toDateString() === today.toDateString();
-          const isTomorrow =
-            new Date(endDate).setDate(endDate.getDate() - 1) ===
-            today.setDate(today.getDate());
-
-          let pointColor = "";
-          if (isToday) {
-            pointColor = "red";
-          } else if (isTomorrow) {
-            pointColor = "yellow";
-          }
-
           const row = document.createElement("tr");
           row.innerHTML = `
-            <td>
-              <span style="color: ${pointColor}; font-size: 20px;">●</span> 
-              ${customer.key}
-            </td>
+            <td>${customer.name}</td>
+            <td>${customer.page}</td>
+            <td>${customer.package}</td>
             <td>
               <button onclick="viewCustomer('${customer.key}')">View</button>
               <button onclick="editCustomer('${customer.key}')">Edit</button>
@@ -119,17 +102,13 @@ function loadCustomers() {
           customerList.appendChild(row);
         });
       } else {
-        console.log("No customers found.");
         alert("No customers found in the database.");
       }
     })
-    .catch(error => {
-      console.error("Error fetching customers:", error);
-      alert("An error occurred while fetching customers.");
-    });
+    .catch(error => console.error("Error fetching customers:", error));
 }
 
-// View Customer Details
+// Function to view customer details in a popup
 window.editCustomer = function (key) {
   const customerRef = ref(db, `customers/${key}`);
 
@@ -147,33 +126,27 @@ window.editCustomer = function (key) {
         document.getElementById('package-price').value = customer.packagePrice;
         document.getElementById('customer-paid').value = customer.customerPaid;
 
-        alert(`Editing customer: ${customer.name}`);
+        showPopup();
       } else {
         alert('Customer not found.');
       }
     })
-    .catch(error => {
-      console.error("Error editing customer:", error);
-      alert("An error occurred while editing customer details.");
-    });
+    .catch(error => console.error("Error editing customer:", error));
 };
-// Close Popup
+
+// Function to show the popup
+function showPopup() {
+  const popup = document.querySelector(".popup");
+  if (popup) popup.style.display = "block";
+}
+
+// Function to close the popup
 window.closePopup = function() {
   const popup = document.querySelector(".popup");
-  if (popup) {
-    popup.remove();
-  }
+  if (popup) popup.style.display = "none";
 };
 
-// Attach Event Listener for Add Customer Button
 document.getElementById("add-customer-button").addEventListener("click", addCustomer);
 
-// Initial Load of Customers
+// Load customers on page start
 loadCustomers();
-
-// Logout Button Functionality
-document.getElementById("logout-button").addEventListener("click", () => {
-  alert("You have successfully logged out.");
-  window.location.href = "login.html";
-  sessionStorage.clear();
-});
