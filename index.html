@@ -61,20 +61,26 @@
     </div>
 
 <!-- Modal -->
-<div class="modal fade" id="customerModal" tabindex="-1" role="dialog">
-  <div class="modal-dialog">
+<!-- Modal -->
+<div class="modal fade" id="customerModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5>Customer Details</h5>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h5 class="modal-title" id="modalLabel">Customer Details</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-      <div class="modal-body" id="customerDetails"></div>
+      <div class="modal-body" id="customerDetails">
+        <!-- Customer details here -->
+      </div>
       <div class="modal-footer">
-        <button id="downloadPdfBtn" class="btn btn-primary">Download PDF</button>
+        <button type="button" class="btn btn-primary" id="downloadPdfBtn">Download PDF</button>
       </div>
     </div>
   </div>
 </div>
+
     <!-- Logout Button -->
     <button id="logout-button">Logout</button>
   </div>
