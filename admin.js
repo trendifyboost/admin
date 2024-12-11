@@ -100,44 +100,32 @@ window.viewCustomer = async function (key) {
   if (snapshot.exists()) {
     const customer = snapshot.val();
 
-    // Populate modal HTML with customer details
     const detailsHTML = `
-      <p><strong>Name:</strong> ${customer.name}</p>
-      <p><strong>Page Name:</strong> ${customer.pageName}</p>
+      <p><strong>Name:</strong> ${key}</p>
+      <p><strong>Page:</strong> ${customer.pageName}</p>
       <p><strong>Package:</strong> ${customer.packageName}</p>
       <p><strong>Start Date:</strong> ${customer.startDate}</p>
       <p><strong>End Date:</strong> ${customer.endDate}</p>
-      <p><strong>Package Duration:</strong> ${customer.packageDays} Days</p>
-      <p><strong>Package Price:</strong> $${customer.packagePrice}</p>
-      <p><strong>Paid Amount:</strong> $${customer.customerPaid}</p>
     `;
+    
     document.getElementById('customerDetails').innerHTML = detailsHTML;
 
+    // Bootstrap Modal open করার জন্য
     $('#customerModal').modal('show');
 
+    // Download Button Click Handler
     document.getElementById('downloadPdfBtn').onclick = function () {
       const doc = new jsPDF();
 
-      let yPos = 10;
-      const customerData = [
-        `Customer Key: ${key}`,
-        `Name: ${customer.name}`,
-        `Page Name: ${customer.pageName}`,
-        `Package: ${customer.packageName}`,
-        `Start Date: ${customer.startDate}`,
-        `End Date: ${customer.endDate}`,
-        `Package Duration: ${customer.packageDays} Days`,
-        `Package Price: $${customer.packagePrice}`,
-        `Paid Amount: $${customer.customerPaid}`
-      ];
+      doc.setFontSize(14);
+      doc.text(`Customer: ${key}`, 10, 10);
+      doc.text(`Page: ${customer.pageName}`, 10, 20);
+      doc.text(`Package: ${customer.packageName}`, 10, 30);
+      doc.text(`Start Date: ${customer.startDate}`, 10, 40);
 
-      customerData.forEach((line) => {
-        doc.text(line, 10, yPos);
-        yPos += 10;
-      });
-
+      // Save PDF
       doc.save(`${key}_CustomerDetails.pdf`);
-      $('#customerModal').modal('hide');
+      $('#customerModal').modal('hide');  // Close modal
     };
   }
 };
