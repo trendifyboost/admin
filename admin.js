@@ -1,6 +1,7 @@
-// Import Firebase modules
+// Import Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
 import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+import { jsPDF } from "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
 
 // Firebase Configuration
 const firebaseConfig = {
@@ -40,7 +41,6 @@ document.getElementById("add-customer-button").addEventListener("click", () => {
   const customerRef = ref(db, `customers/${safeName}`);
 
   set(customerRef, {
-    name,
     pageName,
     packageName,
     startDate,
@@ -91,18 +91,15 @@ window.deleteCustomer = function (key) {
   });
 };
 
-// View Customer Details
+// View Customer Details and Generate PDF
 window.viewCustomer = async function (key) {
-  const { jsPDF } = window.jspdf;
-
   const snapshot = await get(ref(db, `customers/${key}`));
 
   if (snapshot.exists()) {
     const customer = snapshot.val();
 
-    // Populate modal HTML with customer details
     const detailsHTML = `
-      <p><strong>Name:</strong> ${customer.Name}</p>
+      <p><strong>Name:</strong> ${key}</p>
       <p><strong>Page Name:</strong> ${customer.pageName}</p>
       <p><strong>Package:</strong> ${customer.packageName}</p>
       <p><strong>Start Date:</strong> ${customer.startDate}</p>
@@ -111,17 +108,20 @@ window.viewCustomer = async function (key) {
       <p><strong>Package Price:</strong> $${customer.packagePrice}</p>
       <p><strong>Paid Amount:</strong> $${customer.customerPaid}</p>
     `;
-    document.getElementById('customerDetails').innerHTML = detailsHTML;
 
-    $('#customerModal').modal('show');
+    document.getElementById('customerDetails').innerHTML = detailsHTML;
 
     document.getElementById('downloadPdfBtn').onclick = function () {
       const doc = new jsPDF();
 
-      let yPos = 10;
+      doc.setFontSize(14);
+      doc.text(`Customer Details for ${key}`, 10, 10);
+
+      const lineHeight = 10;
+      let yPos = 20;
+
       const customerData = [
-        `Customer Key: ${key}`,
-        `Name: ${{key}`,
+        `Name: ${key}`,
         `Page Name: ${customer.pageName}`,
         `Package: ${customer.packageName}`,
         `Start Date: ${customer.startDate}`,
@@ -133,14 +133,13 @@ window.viewCustomer = async function (key) {
 
       customerData.forEach((line) => {
         doc.text(line, 10, yPos);
-        yPos += 10;
+        yPos += lineHeight;
       });
 
       doc.save(`${key}_CustomerDetails.pdf`);
-      $('#customerModal').modal('hide');
     };
   }
 };
 
-// Initial Load of Customer Data
+// Initial load
 loadCustomers();
