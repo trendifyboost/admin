@@ -102,7 +102,7 @@ window.viewCustomer = async function (key) {
 
     // Populate modal HTML with customer details
     const detailsHTML = `
-      <p><strong>Name:</strong> ${key}</p>
+      <p><strong>Name:</strong> ${customer.Name}</p>
       <p><strong>Page Name:</strong> ${customer.pageName}</p>
       <p><strong>Package:</strong> ${customer.packageName}</p>
       <p><strong>Start Date:</strong> ${customer.startDate}</p>
