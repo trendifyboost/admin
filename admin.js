@@ -144,5 +144,6 @@ window.viewCustomer = async function (key) {
   }
 };
 
+
 // Initial load
 loadCustomers();
