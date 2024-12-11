@@ -1,4 +1,4 @@
-// Import Firebase
+// Import Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
 import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
 
@@ -40,6 +40,7 @@ document.getElementById("add-customer-button").addEventListener("click", () => {
   const customerRef = ref(db, `customers/${safeName}`);
 
   set(customerRef, {
+    name,
     pageName,
     packageName,
     startDate,
@@ -90,15 +91,18 @@ window.deleteCustomer = function (key) {
   });
 };
 
-// View Customer Details and Generate PDF
+// View Customer Details
 window.viewCustomer = async function (key) {
+  const { jsPDF } = window.jspdf;
+
   const snapshot = await get(ref(db, `customers/${key}`));
 
   if (snapshot.exists()) {
     const customer = snapshot.val();
 
+    // Populate modal HTML with customer details
     const detailsHTML = `
-      <p><strong>Name:</strong> ${key}</p>
+      <p><strong>Name:</strong> ${customer.name}</p>
       <p><strong>Page Name:</strong> ${customer.pageName}</p>
       <p><strong>Package:</strong> ${customer.packageName}</p>
       <p><strong>Start Date:</strong> ${customer.startDate}</p>
@@ -107,23 +111,17 @@ window.viewCustomer = async function (key) {
       <p><strong>Package Price:</strong> $${customer.packagePrice}</p>
       <p><strong>Paid Amount:</strong> $${customer.customerPaid}</p>
     `;
-
     document.getElementById('customerDetails').innerHTML = detailsHTML;
 
-    document.getElementById('downloadPdfBtn').onclick = function () {
-      // jsPDF Access via window
-      const { jsPDF } = window;
+    $('#customerModal').modal('show');
 
+    document.getElementById('downloadPdfBtn').onclick = function () {
       const doc = new jsPDF();
 
-      doc.setFontSize(14);
-      doc.text(`Customer Details for ${key}`, 10, 10);
-
-      const lineHeight = 10;
-      let yPos = 20;
-
+      let yPos = 10;
       const customerData = [
-        `Name: ${key}`,
+        `Customer Key: ${key}`,
+        `Name: ${customer.name}`,
         `Page Name: ${customer.pageName}`,
         `Package: ${customer.packageName}`,
         `Start Date: ${customer.startDate}`,
@@ -135,14 +133,14 @@ window.viewCustomer = async function (key) {
 
       customerData.forEach((line) => {
         doc.text(line, 10, yPos);
-        yPos += lineHeight;
+        yPos += 10;
       });
 
       doc.save(`${key}_CustomerDetails.pdf`);
+      $('#customerModal').modal('hide');
     };
   }
 };
 
-
-// Initial load
+// Initial Load of Customer Data
 loadCustomers();
