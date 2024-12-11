@@ -112,6 +112,9 @@ window.viewCustomer = async function (key) {
     document.getElementById('customerDetails').innerHTML = detailsHTML;
 
     document.getElementById('downloadPdfBtn').onclick = function () {
+      // jsPDF Access via window
+      const { jsPDF } = window;
+
       const doc = new jsPDF();
 
       doc.setFontSize(14);
