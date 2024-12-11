@@ -111,32 +111,47 @@ window.viewCustomer = async function (key) {
   if (snapshot.exists()) {
     const customer = snapshot.val();
 
+    // সব কাস্টমার ভ্যালু স্টোর করে একটি HTML section তৈরি
     const detailsHTML = `
-      <p><strong>Name:</strong> ${key}</p>
-      <p><strong>Page:</strong> ${customer.pageName}</p>
+      <p><strong>Name:</strong> ${customer.name}</p>
+      <p><strong>Page Name:</strong> ${customer.pageName}</p>
       <p><strong>Package:</strong> ${customer.packageName}</p>
       <p><strong>Start Date:</strong> ${customer.startDate}</p>
-      <p><strong>End Date:</strong> ${customer.endDate}</p>
+      <p><strong>Package Duration:</strong> ${customer.packageDays} Days</p>
+      <p><strong>Package Price:</strong> $${customer.packagePrice}</p>
+      <p><strong>Paid Amount:</strong> $${customer.customerPaid}</p>
     `;
     
     document.getElementById('customerDetails').innerHTML = detailsHTML;
 
-    // Bootstrap Modal open করার জন্য
     $('#customerModal').modal('show');
 
-    // Download Button Click Handler
     document.getElementById('downloadPdfBtn').onclick = function () {
       const doc = new jsPDF();
 
       doc.setFontSize(14);
-      doc.text(`Customer: ${key}`, 10, 10);
-      doc.text(`Page: ${customer.pageName}`, 10, 20);
-      doc.text(`Package: ${customer.packageName}`, 10, 30);
-      doc.text(`Start Date: ${customer.startDate}`, 10, 40);
+      doc.text(`Customer Details for ${key}`, 10, 10);
 
-      // Save PDF
+      const lineHeight = 10;
+      let yPos = 20;
+
+      const customerData = [
+        `Name: ${customer.name}`,
+        `Page Name: ${customer.pageName}`,
+        `Package: ${customer.packageName}`,
+        `Start Date: ${customer.startDate}`,
+        `Package Duration: ${customer.packageDays} Days`,
+        `Package Price: $${customer.packagePrice}`,
+        `Paid Amount: $${customer.customerPaid}`
+      ];
+
+      customerData.forEach((line) => {
+        doc.text(line, 10, yPos);
+        yPos += lineHeight;
+      });
+
       doc.save(`${key}_CustomerDetails.pdf`);
-      $('#customerModal').modal('hide');  // Close modal
+      $('#customerModal').modal('hide');
     };
   }
 };
