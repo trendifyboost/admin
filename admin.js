@@ -1,4 +1,4 @@
-// Import Firebase
+// Import Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
 import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
 
@@ -40,6 +40,7 @@ document.getElementById("add-customer-button").addEventListener("click", () => {
   const customerRef = ref(db, `customers/${safeName}`);
 
   set(customerRef, {
+    name,
     pageName,
     packageName,
     startDate,
@@ -68,21 +69,9 @@ function loadCustomers() {
       const sortedCustomers = Object.entries(customers).sort((a, b) => new Date(a[1].endDate) - new Date(b[1].endDate));
 
       sortedCustomers.forEach(([key, customer]) => {
-        const endDate = new Date(customer.endDate);
-        const today = new Date();
-        const tomorrow = new Date(today);
-        tomorrow.setDate(today.getDate() + 1);
-
-        let dotColor = "";
-        if (endDate.toDateString() === today.toDateString()) {
-          dotColor = "red";
-        } else if (endDate.toDateString() === tomorrow.toDateString()) {
-          dotColor = "yellow";
-        }
-
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td>${key} <span style="color: ${dotColor}; font-weight: bold;">●</span></td>
+          <td>${key}</td>
           <td>
             <button onclick="viewCustomer('${key}')">View</button>
             <button onclick="deleteCustomer('${key}')">Delete</button>
@@ -111,17 +100,17 @@ window.viewCustomer = async function (key) {
   if (snapshot.exists()) {
     const customer = snapshot.val();
 
-    // সব কাস্টমার ভ্যালু স্টোর করে একটি HTML section তৈরি
+    // Populate modal HTML with customer details
     const detailsHTML = `
       <p><strong>Name:</strong> ${customer.name}</p>
       <p><strong>Page Name:</strong> ${customer.pageName}</p>
       <p><strong>Package:</strong> ${customer.packageName}</p>
       <p><strong>Start Date:</strong> ${customer.startDate}</p>
+      <p><strong>End Date:</strong> ${customer.endDate}</p>
       <p><strong>Package Duration:</strong> ${customer.packageDays} Days</p>
       <p><strong>Package Price:</strong> $${customer.packagePrice}</p>
       <p><strong>Paid Amount:</strong> $${customer.customerPaid}</p>
     `;
-    
     document.getElementById('customerDetails').innerHTML = detailsHTML;
 
     $('#customerModal').modal('show');
@@ -129,17 +118,14 @@ window.viewCustomer = async function (key) {
     document.getElementById('downloadPdfBtn').onclick = function () {
       const doc = new jsPDF();
 
-      doc.setFontSize(14);
-      doc.text(`Customer Details for ${key}`, 10, 10);
-
-      const lineHeight = 10;
-      let yPos = 20;
-
+      let yPos = 10;
       const customerData = [
+        `Customer Key: ${key}`,
         `Name: ${customer.name}`,
         `Page Name: ${customer.pageName}`,
         `Package: ${customer.packageName}`,
         `Start Date: ${customer.startDate}`,
+        `End Date: ${customer.endDate}`,
         `Package Duration: ${customer.packageDays} Days`,
         `Package Price: $${customer.packagePrice}`,
         `Paid Amount: $${customer.customerPaid}`
@@ -147,7 +133,7 @@ window.viewCustomer = async function (key) {
 
       customerData.forEach((line) => {
         doc.text(line, 10, yPos);
-        yPos += lineHeight;
+        yPos += 10;
       });
 
       doc.save(`${key}_CustomerDetails.pdf`);
@@ -156,5 +142,5 @@ window.viewCustomer = async function (key) {
   }
 };
 
-// Initial load
+// Initial Load of Customer Data
 loadCustomers();
