@@ -102,7 +102,7 @@ window.viewCustomer = async function (key) {
 
     // Populate modal HTML with customer details
     const detailsHTML = `
-      <p><strong>Name:</strong> ${customer.name}</p>
+      <p><strong>Name:</strong> ${key}</p>
       <p><strong>Page Name:</strong> ${customer.pageName}</p>
       <p><strong>Package:</strong> ${customer.packageName}</p>
       <p><strong>Start Date:</strong> ${customer.startDate}</p>
@@ -121,7 +121,7 @@ window.viewCustomer = async function (key) {
       let yPos = 10;
       const customerData = [
         `Customer Key: ${key}`,
-        `Name: ${customer.name}`,
+        `Name: ${{key}`,
         `Page Name: ${customer.pageName}`,
         `Package: ${customer.packageName}`,
         `Start Date: ${customer.startDate}`,
