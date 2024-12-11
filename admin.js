@@ -111,7 +111,6 @@ window.viewCustomer = async function (key) {
   if (snapshot.exists()) {
     const customer = snapshot.val();
 
-    // Populate modal with customer details
     const detailsHTML = `
       <p><strong>Name:</strong> ${key}</p>
       <p><strong>Page:</strong> ${customer.pageName}</p>
@@ -119,32 +118,25 @@ window.viewCustomer = async function (key) {
       <p><strong>Start Date:</strong> ${customer.startDate}</p>
       <p><strong>End Date:</strong> ${customer.endDate}</p>
     `;
+    
     document.getElementById('customerDetails').innerHTML = detailsHTML;
 
+    // Bootstrap Modal open করার জন্য
     $('#customerModal').modal('show');
 
-    // Handle Download PDF Button Click
+    // Download Button Click Handler
     document.getElementById('downloadPdfBtn').onclick = function () {
       const doc = new jsPDF();
 
-      // Adding agency logo
-      const logoURL = "image/logo.png";
-      const logoImg = new Image();
-      logoImg.src = logoURL;
-      logoImg.onload = function () {
-        doc.addImage(logoImg, "PNG", 10, 10, 50, 50);
+      doc.setFontSize(14);
+      doc.text(`Customer: ${key}`, 10, 10);
+      doc.text(`Page: ${customer.pageName}`, 10, 20);
+      doc.text(`Package: ${customer.packageName}`, 10, 30);
+      doc.text(`Start Date: ${customer.startDate}`, 10, 40);
 
-        doc.setFontSize(14);
-        doc.text(`Name: ${key}`, 60, 20);
-        doc.text(`Page: ${customer.pageName}`, 60, 25);
-        doc.text(`Package: ${customer.packageName}`, 60, 30);
-
-        doc.setFontSize(10);
-        doc.text(`trendifyboost.github.io/agency`, 10, 290);
-
-        doc.save(`${key}_CustomerDetails.pdf`);
-        $('#customerModal').modal('hide');
-      };
+      // Save PDF
+      doc.save(`${key}_CustomerDetails.pdf`);
+      $('#customerModal').modal('hide');  // Close modal
     };
   }
 };
