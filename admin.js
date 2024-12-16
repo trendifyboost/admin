@@ -144,7 +144,18 @@ window.viewCustomer = function (key) {
         downloadButton = document.createElement("button");
         downloadButton.id = "download-receipt-button";
         downloadButton.innerText = "Download Receipt";
-        downloadButton.style.marginTop = "10px";
+        downloadButton.style.marginTop = "20px";       // পপআপ কন্টেন্টের নিচ থেকে ২০ পিক্সেল দূরে রাখা
+        downloadButton.style.padding = "10px 20px";
+        downloadButton.style.backgroundColor = "#4CAF50";
+        downloadButton.style.color = "white";
+        downloadButton.style.border = "none";
+        downloadButton.style.cursor = "pointer";
+        downloadButton.style.borderRadius = "5px";
+        downloadButton.style.fontSize = "16px";
+        downloadButton.style.display = "block";        // বাটনটিকে ব্লক এলিমেন্ট বানানো
+        downloadButton.style.marginLeft = "auto";      // বাটনটিকে কেন্দ্র করতে
+        downloadButton.style.marginRight = "auto";     // বাটনটিকে কেন্দ্র করতে
+
         downloadButton.addEventListener("click", generateReceiptPDF);
         popup.appendChild(downloadButton);
       }
