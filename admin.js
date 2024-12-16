@@ -8,7 +8,7 @@ const firebaseConfig = {
   authDomain: "trendify-30126.firebaseapp.com",
   databaseURL: "https://trendify-30126-default-rtdb.firebaseio.com",
   projectId: "trendify-30126",
-  storageBucket: "trendify-30126.firebasestorage.app",
+  storageBucket: "trendify-30126.appspot.com",
   messagingSenderId: "816600328899",
   appId: "1:816600328899:web:4b01799c1e82e932451076",
   measurementId: "G-9QV2QDB3CG"
@@ -40,6 +40,7 @@ document.getElementById("add-customer-button").addEventListener("click", () => {
   const customerRef = ref(db, `customers/${safeName}`);
 
   set(customerRef, {
+    name,
     pageName,
     packageName,
     startDate,
@@ -82,7 +83,7 @@ function loadCustomers() {
 
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td>${key} <span style="color: ${dotColor}; font-weight: bold;">●</span></td>
+          <td>${customer.name} <span style="color: ${dotColor}; font-weight: bold;">●</span></td>
           <td>
             <button onclick="viewCustomer('${key}')">View</button>
             <button onclick="deleteCustomer('${key}')">Delete</button>
@@ -91,7 +92,7 @@ function loadCustomers() {
         customerList.appendChild(row);
       });
     }
-  });
+  }).catch(error => console.error("Error loading customers:", error));
 }
 
 // Delete Customer
@@ -99,7 +100,7 @@ window.deleteCustomer = function (key) {
   remove(ref(db, `customers/${key}`)).then(() => {
     alert("Customer deleted successfully!");
     loadCustomers();
-  });
+  }).catch(error => console.error("Error deleting customer:", error));
 };
 
 // View Customer Details
@@ -108,14 +109,19 @@ window.viewCustomer = function (key) {
     if (snapshot.exists()) {
       const customer = snapshot.val();
       alert(`
-        Name: ${key}
+        Name: ${customer.name}
         Page: ${customer.pageName}
         Package: ${customer.packageName}
         Start Date: ${customer.startDate}
         End Date: ${customer.endDate}
+        Package Days: ${customer.packageDays}
+        Package Price: ${customer.packagePrice}
+        Paid Amount: ${customer.customerPaid}
       `);
+    } else {
+      alert("Customer data not found.");
     }
-  });
+  }).catch(error => console.error("Error viewing customer:", error));
 };
 
 // Initial load
