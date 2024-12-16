@@ -143,7 +143,7 @@ window.viewCustomer = function (key) {
       if (!downloadButton) {
         downloadButton = document.createElement("button");
         downloadButton.id = "download-receipt-button";
-        downloadButton.innerText = "Download Receipt";
+        downloadButton.innerText = "Download";
         downloadButton.style.marginTop = "20px";       // পপআপ কন্টেন্টের নিচ থেকে ২০ পিক্সেল দূরে রাখা
         downloadButton.style.padding = "10px 20px";
         downloadButton.style.backgroundColor = "#4CAF50";
