@@ -33,6 +33,8 @@ document.getElementById("add-customer-button").addEventListener("click", () => {
     return;
   }
 
+  const remainingAmount = packagePrice - customerPaid; // কত টাকা বাকি আছে সেটি হিসাব
+
   const endDate = new Date(startDate);
   endDate.setDate(endDate.getDate() + packageDays);
 
@@ -46,6 +48,7 @@ document.getElementById("add-customer-button").addEventListener("click", () => {
     packageDays,
     packagePrice,
     customerPaid,
+    remainingAmount, // বাকি টাকা ডাটাবেজে যোগ করুন
     endDate: endDate.toISOString().split('T')[0]
   })
   .then(() => {
@@ -54,7 +57,6 @@ document.getElementById("add-customer-button").addEventListener("click", () => {
   })
   .catch(error => console.error("Error adding customer:", error));
 });
-
 // Load and Display Customers
 function loadCustomers() {
   const customerList = document.getElementById("customer-list");
@@ -108,7 +110,7 @@ window.viewCustomer = function (key) {
     if (snapshot.exists()) {
       const customer = snapshot.val();
       alert(`
-        Name: ${customer.name}
+        Name: ${key}
         Page: ${customer.pageName}
         Package: ${customer.packageName}
         Start Date: ${customer.startDate}
@@ -116,6 +118,7 @@ window.viewCustomer = function (key) {
         Package Days: ${customer.packageDays}
         Package Price: ${customer.packagePrice}
         Paid Amount: ${customer.customerPaid}
+        Remaining Amount: ${customer.remainingAmount} // এখানে বাকি টাকা দেখানো
       `);
     } else {
       alert("Customer data not found.");
