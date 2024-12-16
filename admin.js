@@ -40,7 +40,6 @@ document.getElementById("add-customer-button").addEventListener("click", () => {
   const customerRef = ref(db, `customers/${safeName}`);
 
   set(customerRef, {
-    name,
     pageName,
     packageName,
     startDate,
@@ -83,7 +82,7 @@ function loadCustomers() {
 
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td>${customer.name} <span style="color: ${dotColor}; font-weight: bold;">●</span></td>
+          <td>${key} <span style="color: ${dotColor}; font-weight: bold;">●</span></td>
           <td>
             <button onclick="viewCustomer('${key}')">View</button>
             <button onclick="deleteCustomer('${key}')">Delete</button>
@@ -92,7 +91,7 @@ function loadCustomers() {
         customerList.appendChild(row);
       });
     }
-  }).catch(error => console.error("Error loading customers:", error));
+  });
 }
 
 // Delete Customer
@@ -100,7 +99,7 @@ window.deleteCustomer = function (key) {
   remove(ref(db, `customers/${key}`)).then(() => {
     alert("Customer deleted successfully!");
     loadCustomers();
-  }).catch(error => console.error("Error deleting customer:", error));
+  });
 };
 
 // View Customer Details
