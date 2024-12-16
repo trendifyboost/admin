@@ -38,20 +38,28 @@
       <button id="add-customer-button">Add Customer</button>
     </div>
 
-    <!-- Customer Details Section -->
-    <div id="customer-details-section">
-      <h2>All Customers</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="customer-list"></tbody>
-      </table>
-    </div>
+<!-- Customer Details Section -->
+<div id="customer-details-section">
+  <h2>All Customers</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="customer-list"></tbody>
+  </table>
+</div>
 
+<!-- Popup Modal -->
+<div id="popup-modal" class="modal">
+  <div class="modal-content">
+    <span class="close-button">&times;</span>
+    <h2>Customer Details</h2>
+    <p id="popup-text"></p>
+  </div>
+</div>
     <!-- Logout Button -->
     <button id="logout-button">Logout</button>
   </div>
