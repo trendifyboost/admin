@@ -39,7 +39,7 @@ document.getElementById("add-customer-button").addEventListener("click", () => {
   endDate.setDate(endDate.getDate() + packageDays);
 
   const safeName = name.replace(/[^a-zA-Z0-9]/g, "_");
-  const customerRef = ref(db, `customers/${safeName}`);
+  const customerRef = ref(db, customers/${safeName});
 
   set(customerRef, {
     pageName,
@@ -83,13 +83,13 @@ function loadCustomers() {
         }
 
         const row = document.createElement("tr");
-        row.innerHTML = `
+        row.innerHTML = 
           <td>${key} <span style="color: ${dotColor}; font-weight: bold;">●</span></td>
           <td>
             <button onclick="viewCustomer('${key}')">View</button>
             <button onclick="deleteCustomer('${key}')">Delete</button>
           </td>
-        `;
+        ;
         customerList.appendChild(row);
       });
     }
@@ -98,7 +98,7 @@ function loadCustomers() {
 
 // Delete Customer
 window.deleteCustomer = function (key) {
-  remove(ref(db, `customers/${key}`)).then(() => {
+  remove(ref(db, customers/${key})).then(() => {
     alert("Customer deleted successfully!");
     loadCustomers();
   });
@@ -106,14 +106,14 @@ window.deleteCustomer = function (key) {
 
 // View Customer Details
 window.viewCustomer = function (key) {
-  get(ref(db, `customers/${key}`)).then(snapshot => {
+  get(ref(db, customers/${key})).then(snapshot => {
     if (snapshot.exists()) {
       const customer = snapshot.val();
       const popup = document.getElementById("popup-modal");
       const popupText = document.getElementById("popup-text");
 
       // Update the text with customer details
-      popupText.innerHTML = `
+      popupText.innerHTML = 
         <strong>Name:</strong> ${key}<br>
         <strong>Page:</strong> ${customer.pageName}<br>
         <strong>Package:</strong> ${customer.packageName}<br>
@@ -123,7 +123,7 @@ window.viewCustomer = function (key) {
         <strong>Package Price:</strong> ${customer.packagePrice}<br>
         <strong>Paid Amount:</strong> ${customer.customerPaid}<br>
         <strong>Remaining Amount:</strong> ${customer.remainingAmount}
-      `;
+      ;
 
       // Display the modal
       popup.style.display = "flex";
@@ -142,51 +142,7 @@ window.viewCustomer = function (key) {
     } else {
       alert("Customer data not found.");
     }
-    // Add a download button below the popup modal
-const popup = document.getElementById("popup-modal");
-const downloadButton = document.createElement("button");
-downloadButton.innerText = "Download Receipt";
-downloadButton.style.marginTop = "10px";
-downloadButton.addEventListener("click", generateReceiptPDF);
-popup.appendChild(downloadButton);
-
-// Function to generate the receipt PDF
-function generateReceiptPDF() {
-    const popupText = document.getElementById("popup-text");
-
-    // Load the background image
-    const backgroundImage = new Image();
-    backgroundImage.src = "image/print.png"; // Path to your A4-sized background image
-
-    backgroundImage.onload = () => {
-        // Create a canvas for html2canvas
-        html2canvas(popupText, {
-            scale: 2 // High resolution
-        }).then(canvas => {
-            const popupImage = canvas.toDataURL("image/png"); // Capture popup content as an image
-
-            // Create a PDF with jsPDF
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF("p", "mm", "a4"); // Portrait, millimeters, A4 size
-
-            // Add the background image to the PDF
-            pdf.addImage(backgroundImage, "PNG", 0, 0, 210, 297); // Full-page background
-
-            // Add the captured popup content to the PDF
-            pdf.addImage(popupImage, "PNG", 10, 50, 190, 0); // Dynamically adjust content position
-
-            // Save the PDF
-            pdf.save("Customer_Receipt.pdf");
-        });
-    };
-
-    backgroundImage.onerror = () => {
-        alert("Failed to load the background image.");
-    };
-}
-
   }).catch(error => console.error("Error viewing customer:", error));
 };
-
 // Initial load
 loadCustomers();
