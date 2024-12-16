@@ -1,181 +1,154 @@
-// Import Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+import { getDatabase, ref, set, push, onValue } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
 
 // Firebase Configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyC5JTd88XMPaw8ThV8i4wh8r37uhSuuKiQ",
-  authDomain: "trendify-30126.firebaseapp.com",
-  databaseURL: "https://trendify-30126-default-rtdb.firebaseio.com",
-  projectId: "trendify-30126",
-  storageBucket: "trendify-30126.firebasestorage.app",
-  messagingSenderId: "816600328899",
-  appId: "1:816600328899:web:4b01799c1e82e932451076",
-  measurementId: "G-9QV2QDB3CG"
+  apiKey: "AIzaSyCO2KsBx8UVttuQVpePMkDdebLxC1uSI1A",
+  authDomain: "nasimul-islam-dggumx.firebaseapp.com",
+  databaseURL: "https://nasimul-islam-dggumx-default-rtdb.firebaseio.com",
+  projectId: "nasimul-islam-dggumx",
+  storageBucket: "nasimul-islam-dggumx.appspot.com",
+  messagingSenderId: "482637964405",
+  appId: "1:482637964405:web:d6282975958cc1e641c43c",
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Add Customer Functionality
-document.getElementById("add-customer-button").addEventListener("click", () => {
-  const name = document.getElementById("customer-name").value.trim();
-  const pageName = document.getElementById("page-name").value.trim();
+// DOM Elements
+const addCustomerButton = document.getElementById("add-customer-button");
+const customerList = document.getElementById("customer-list");
+const popupModal = document.getElementById("popup-modal");
+const popupText = document.getElementById("popup-text");
+const closeButton = document.querySelector(".close-button");
+const downloadButton = document.getElementById("download-receipt-button");
+const logoutButton = document.getElementById("logout-button");
+
+// Add Customer
+addCustomerButton.addEventListener("click", () => {
+  const customerName = document.getElementById("customer-name").value;
+  const pageName = document.getElementById("page-name").value;
   const packageName = document.getElementById("package-name").value;
   const startDate = document.getElementById("start-date").value;
   const packageDays = parseInt(document.getElementById("package-days").value);
-  const packagePrice = parseFloat(document.getElementById("package-price").value);
-  const customerPaid = parseFloat(document.getElementById("customer-paid").value);
+  const packagePrice = parseInt(document.getElementById("package-price").value);
+  const customerPaid = parseInt(document.getElementById("customer-paid").value);
+  const endDate = calculateEndDate(startDate, packageDays);
 
-  if (!name || !pageName || !startDate || isNaN(packageDays) || isNaN(packagePrice) || isNaN(customerPaid)) {
-    alert("Please fill in all customer details correctly.");
-    return;
+  if (
+    customerName &&
+    pageName &&
+    packageName &&
+    startDate &&
+    !isNaN(packageDays) &&
+    !isNaN(packagePrice) &&
+    !isNaN(customerPaid)
+  ) {
+    const customerRef = push(ref(db, "Customers"));
+    set(customerRef, {
+      customerName,
+      pageName,
+      packageName,
+      startDate,
+      endDate,
+      packageDays,
+      packagePrice,
+      customerPaid,
+    }).then(() => {
+      alert("Customer added successfully!");
+      clearInputs();
+    });
+  } else {
+    alert("Please fill in all fields correctly!");
   }
-
-  const remainingAmount = packagePrice - customerPaid; // কত টাকা বাকি আছে সেটি হিসাব
-
-  const endDate = new Date(startDate);
-  endDate.setDate(endDate.getDate() + packageDays);
-
-  const safeName = name.replace(/[^a-zA-Z0-9]/g, "_");
-  const customerRef = ref(db, `customers/${safeName}`);
-
-  set(customerRef, {
-    pageName,
-    packageName,
-    startDate,
-    packageDays,
-    packagePrice,
-    customerPaid,
-    remainingAmount, // বাকি টাকা ডাটাবেজে যোগ করুন
-    endDate: endDate.toISOString().split('T')[0]
-  })
-  .then(() => {
-    alert("Customer added successfully!");
-    loadCustomers();
-  })
-  .catch(error => console.error("Error adding customer:", error));
 });
-// Load and Display Customers
-function loadCustomers() {
-  const customerList = document.getElementById("customer-list");
-  const customersRef = ref(db, "customers");
 
-  get(customersRef).then(snapshot => {
+// Calculate End Date
+function calculateEndDate(startDate, days) {
+  const date = new Date(startDate);
+  date.setDate(date.getDate() + days);
+  return date.toISOString().split("T")[0];
+}
+
+// Clear Inputs
+function clearInputs() {
+  document.getElementById("customer-name").value = "";
+  document.getElementById("page-name").value = "";
+  document.getElementById("package-name").value = "Boosting";
+  document.getElementById("start-date").value = "";
+  document.getElementById("package-days").value = "";
+  document.getElementById("package-price").value = "";
+  document.getElementById("customer-paid").value = "";
+}
+
+// Fetch Customers
+function fetchCustomers() {
+  const customersRef = ref(db, "Customers");
+  onValue(customersRef, (snapshot) => {
     customerList.innerHTML = "";
-
-    if (snapshot.exists()) {
-      const customers = snapshot.val();
-      const sortedCustomers = Object.entries(customers).sort((a, b) => new Date(a[1].endDate) - new Date(b[1].endDate));
-
-      sortedCustomers.forEach(([key, customer]) => {
-        const endDate = new Date(customer.endDate);
-        const today = new Date();
-        const tomorrow = new Date(today);
-        tomorrow.setDate(today.getDate() + 1);
-
-        let dotColor = "";
-        if (endDate.toDateString() === today.toDateString()) {
-          dotColor = "red";
-        } else if (endDate.toDateString() === tomorrow.toDateString()) {
-          dotColor = "yellow";
-        }
-
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${key} <span style="color: ${dotColor}; font-weight: bold;">●</span></td>
-          <td>
-            <button onclick="viewCustomer('${key}')">View</button>
-            <button onclick="deleteCustomer('${key}')">Delete</button>
-          </td>
-        `;
-        customerList.appendChild(row);
-      });
-    }
-  });
-}
-
-// Delete Customer
-window.deleteCustomer = function (key) {
-  remove(ref(db, `customers/${key}`)).then(() => {
-    alert("Customer deleted successfully!");
-    loadCustomers();
-  });
-};
-
-// Generate Receipt PDF Function
-function generateReceiptPDF() {
-  const { jsPDF } = window.jspdf; // jsPDF এর রেফারেন্স পাওয়া
-  const pdf = new jsPDF();
-
-  // পপআপে থাকা তথ্যগুলো সংগ্রহ করা
-  const popupText = document.getElementById("popup-text").innerText;
-
-  // PDF এ কনটেন্ট যোগ করা
-  pdf.text(popupText, 10, 10);
-
-  // PDF ডাউনলোড করা
-  pdf.save("customer-receipt.pdf");
-}
-
-// View Customer Details
-window.viewCustomer = function (key) {
-  get(ref(db, `customers/${key}`)).then(snapshot => {
-    if (snapshot.exists()) {
-      const customer = snapshot.val();
-      const popup = document.getElementById("popup-modal");
-      const popupText = document.getElementById("popup-text");
-
-      popupText.innerHTML = `
-        <strong>Name:</strong> ${key}<br>
-        <strong>Page:</strong> ${customer.pageName}<br>
-        <strong>Package:</strong> ${customer.packageName}<br>
-        <strong>Start Date:</strong> ${customer.startDate}<br>
-        <strong>End Date:</strong> ${customer.endDate}<br>
-        <strong>Package Days:</strong> ${customer.packageDays}<br>
-        <strong>Package Price:</strong> ${customer.packagePrice}<br>
-        <strong>Paid Amount:</strong> ${customer.customerPaid}<br>
-        <strong>Remaining Amount:</strong> ${customer.remainingAmount}
+    snapshot.forEach((childSnapshot) => {
+      const customerKey = childSnapshot.key;
+      const customerData = childSnapshot.val();
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${customerData.customerName}</td>
+        <td><button class="view-details" data-key="${customerKey}">View Details</button></td>
       `;
+      customerList.appendChild(row);
+    });
 
-      let downloadButton = document.getElementById("download-receipt-button");
-if (!downloadButton) {
-  downloadButton = document.createElement("button");
-  downloadButton.id = "download-receipt-button";
-  downloadButton.innerText = "Print";
-  downloadButton.classList.add("download-button"); // Add a CSS class for styling
-
-  downloadButton.addEventListener("click", generateReceiptPDF);
-  popup.appendChild(downloadButton); // Ensure `popup` is a valid DOM element
+    document.querySelectorAll(".view-details").forEach((button) => {
+      button.addEventListener("click", (event) => {
+        const key = event.target.getAttribute("data-key");
+        showCustomerDetails(key);
+      });
+    });
+  });
 }
 
+// Show Customer Details
+function showCustomerDetails(key) {
+  const customerRef = ref(db, `Customers/${key}`);
+  onValue(customerRef, (snapshot) => {
+    const customer = snapshot.val();
+    const details = `
+      Name: ${customer.customerName}\n
+      Page Name: ${customer.pageName}\n
+      Package: ${customer.packageName}\n
+      Start Date: ${customer.startDate}\n
+      End Date: ${customer.endDate}\n
+      Package Days: ${customer.packageDays}\n
+      Package Price: ${customer.packagePrice}\n
+      Customer Paid: ${customer.customerPaid}
+    `;
+    popupText.textContent = details;
+    popupModal.style.display = "block";
 
-      popup.style.display = "flex";
+    downloadButton.onclick = () => {
+      generatePDF(details, customer.customerName);
+    };
+  });
+}
 
-      function closeModal() {
-        popup.style.display = "none";
-        if (downloadButton && downloadButton.parentElement) {
-          downloadButton.remove();
-        }
-        window.removeEventListener("click", windowClickHandler);
-      }
+// Generate PDF
+function generatePDF(details, customerName) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.text(`Customer Details: ${customerName}`, 10, 10);
+  doc.text(details, 10, 20);
+  doc.save(`${customerName}-details.pdf`);
+}
 
-      document.querySelector(".close-button").onclick = closeModal;
+// Close Modal
+closeButton.addEventListener("click", () => {
+  popupModal.style.display = "none";
+});
 
-      function windowClickHandler(event) {
-        if (event.target === popup) {
-          closeModal();
-        }
-      }
+// Logout
+logoutButton.addEventListener("click", () => {
+  window.location.href = "index.html";
+});
 
-      window.addEventListener("click", windowClickHandler);
-
-    } else {
-      alert("Customer data not found.");
-    }
-  }).catch(error => console.error("Error viewing customer:", error));
-};
-
-// Initial load
-loadCustomers();
+// Fetch Customers on Page Load
+fetchCustomers();
