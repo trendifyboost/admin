@@ -128,6 +128,52 @@ window.viewCustomer = function (key) {
       // Display the modal
       popup.style.display = "flex";
 
+
+// Add a download button below the popup modal
+const popup = document.getElementById("popup-modal");
+const downloadButton = document.createElement("button");
+downloadButton.innerText = "Download Receipt";
+downloadButton.style.marginTop = "10px";
+downloadButton.addEventListener("click", generateReceiptPDF);
+popup.appendChild(downloadButton);
+
+// Function to generate the receipt PDF
+function generateReceiptPDF() {
+    const popupText = document.getElementById("popup-text");
+
+    // Load the background image
+    const backgroundImage = new Image();
+    backgroundImage.src = "image/print.png"; // Path to your A4-sized background image
+
+    backgroundImage.onload = () => {
+        // Create a canvas for html2canvas
+        html2canvas(popupText, {
+            scale: 2 // High resolution
+        }).then(canvas => {
+            const popupImage = canvas.toDataURL("image/png"); // Capture popup content as an image
+
+            // Create a PDF with jsPDF
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF("p", "mm", "a4"); // Portrait, millimeters, A4 size
+
+            // Add the background image to the PDF
+            pdf.addImage(backgroundImage, "PNG", 0, 0, 210, 297); // Full-page background
+
+            // Add the captured popup content to the PDF
+            pdf.addImage(popupImage, "PNG", 10, 50, 190, 0); // Dynamically adjust content position
+
+            // Save the PDF
+            pdf.save("Customer_Receipt.pdf");
+        });
+    };
+
+    backgroundImage.onerror = () => {
+        alert("Failed to load the background image.");
+    };
+}
+
+      
+
       // Close the modal when the close button is clicked
       document.querySelector(".close-button").onclick = () => {
         popup.style.display = "none";
