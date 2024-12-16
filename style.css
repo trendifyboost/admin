@@ -86,8 +86,9 @@ td {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5); /* Transparent black overlay */
-  justify-content: center;
-  align-items: center;
+  display: flex; /* For centering modal */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
 }
 
 /* Modal Content Box */
@@ -98,7 +99,7 @@ td {
   width: 90%;
   max-width: 500px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  text-align: left;
+  text-align: center; /* Center text for a cleaner layout */
   animation: fadeIn 0.3s ease-in-out;
 }
 
@@ -114,6 +115,7 @@ td {
   font-size: 16px;
 }
 
+/* Close Button */
 .close-button {
   color: #aaa;
   float: right;
@@ -124,6 +126,22 @@ td {
 
 .close-button:hover {
   color: #000;
+}
+
+/* Button Placement */
+button {
+  padding: 10px 20px;
+  margin: 10px auto 0; /* Center align below content */
+  display: block; /* Full-width alignment */
+  background-color: #007bff; /* Button color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3; /* Hover effect */
 }
 
 /* Animation for Modal */
@@ -140,25 +158,21 @@ td {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  #admin-panel {
-    padding: 15px;
-  }
-
-  table th, table td {
-    padding: 8px;
-  }
-
   .modal-content {
     width: 95%;
     padding: 15px;
   }
 
-  input, select, button {
-    max-width: 100%;
+  .modal-content h2 {
+    font-size: 20px;
+  }
+
+  .modal-content p {
     font-size: 14px;
   }
 
-  h1, h2 {
-    font-size: 20px;
+  button {
+    font-size: 14px;
+    width: 100%; /* Full-width button */
   }
 }
