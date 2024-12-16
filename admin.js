@@ -1,15 +1,17 @@
+// Import Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-import { getDatabase, ref, set, push, onValue } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
 
 // Firebase Configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCO2KsBx8UVttuQVpePMkDdebLxC1uSI1A",
-  authDomain: "nasimul-islam-dggumx.firebaseapp.com",
-  databaseURL: "https://nasimul-islam-dggumx-default-rtdb.firebaseio.com",
-  projectId: "nasimul-islam-dggumx",
-  storageBucket: "nasimul-islam-dggumx.appspot.com",
-  messagingSenderId: "482637964405",
-  appId: "1:482637964405:web:d6282975958cc1e641c43c",
+  apiKey: "AIzaSyC5JTd88XMPaw8ThV8i4wh8r37uhSuuKiQ",
+  authDomain: "trendify-30126.firebaseapp.com",
+  databaseURL: "https://trendify-30126-default-rtdb.firebaseio.com",
+  projectId: "trendify-30126",
+  storageBucket: "trendify-30126.firebasestorage.app",
+  messagingSenderId: "816600328899",
+  appId: "1:816600328899:web:4b01799c1e82e932451076",
+  measurementId: "G-9QV2QDB3CG"
 };
 
 // Initialize Firebase
