@@ -112,7 +112,6 @@ window.viewCustomer = function (key) {
       const popup = document.getElementById("popup-modal");
       const popupText = document.getElementById("popup-text");
 
-      // Update the text with customer details
       popupText.innerHTML = `
         <strong>Name:</strong> ${key}<br>
         <strong>Page:</strong> ${customer.pageName}<br>
@@ -125,7 +124,6 @@ window.viewCustomer = function (key) {
         <strong>Remaining Amount:</strong> ${customer.remainingAmount}
       `;
 
-      // Add a download button if it doesn't already exist
       let downloadButton = document.getElementById("download-receipt-button");
       if (!downloadButton) {
         downloadButton = document.createElement("button");
@@ -136,31 +134,31 @@ window.viewCustomer = function (key) {
         popup.appendChild(downloadButton);
       }
 
-      // Display the modal
       popup.style.display = "flex";
 
-      // Close the modal when the close button is clicked
-      document.querySelector(".close-button").onclick = () => {
+      function closeModal() {
         popup.style.display = "none";
-        // Remove the download button when the modal is closed
-        if (downloadButton) {
+        if (downloadButton && downloadButton.parentElement) {
           downloadButton.remove();
         }
-      };
+        window.removeEventListener("click", windowClickHandler);
+      }
 
-      // Close the modal when clicked outside the content
-      window.onclick = (event) => {
+      document.querySelector(".close-button").onclick = closeModal;
+
+      function windowClickHandler(event) {
         if (event.target === popup) {
-          popup.style.display = "none";
-          if (downloadButton) {
-            downloadButton.remove();
-          }
+          closeModal();
         }
-      };
+      }
+
+      window.addEventListener("click", windowClickHandler);
+
     } else {
       alert("Customer data not found.");
     }
   }).catch(error => console.error("Error viewing customer:", error));
 };
+
 // Initial load
 loadCustomers();
