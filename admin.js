@@ -128,8 +128,21 @@ window.viewCustomer = function (key) {
       // Display the modal
       popup.style.display = "flex";
 
+      // Close the modal when the close button is clicked
+      document.querySelector(".close-button").onclick = () => {
+        popup.style.display = "none";
+      };
 
-// Add a download button below the popup modal
+      // Close the modal when clicked outside the content
+      window.onclick = (event) => {
+        if (event.target === popup) {
+          popup.style.display = "none";
+        }
+      };
+    } else {
+      alert("Customer data not found.");
+    }
+    // Add a download button below the popup modal
 const popup = document.getElementById("popup-modal");
 const downloadButton = document.createElement("button");
 downloadButton.innerText = "Download Receipt";
@@ -171,23 +184,6 @@ function generateReceiptPDF() {
         alert("Failed to load the background image.");
     };
 }
-
-      
-
-      // Close the modal when the close button is clicked
-      document.querySelector(".close-button").onclick = () => {
-        popup.style.display = "none";
-      };
-
-      // Close the modal when clicked outside the content
-      window.onclick = (event) => {
-        if (event.target === popup) {
-          popup.style.display = "none";
-        }
-      };
-    } else {
-      alert("Customer data not found.");
-    }
   }).catch(error => console.error("Error viewing customer:", error));
 };
 // Initial load
