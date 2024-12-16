@@ -1,6 +1,7 @@
 // Import Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+import { getDatabase, ref, set, push, onValue } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+import { jsPDF } from "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
 
 // Firebase Configuration
 const firebaseConfig = {
@@ -60,6 +61,8 @@ addCustomerButton.addEventListener("click", () => {
     }).then(() => {
       alert("Customer added successfully!");
       clearInputs();
+    }).catch((error) => {
+      console.error("Error adding customer:", error);
     });
   } else {
     alert("Please fill in all fields correctly!");
@@ -93,10 +96,12 @@ function fetchCustomers() {
       const customerKey = childSnapshot.key;
       const customerData = childSnapshot.val();
       const row = document.createElement("tr");
+
       row.innerHTML = `
         <td>${customerData.customerName}</td>
         <td><button class="view-details" data-key="${customerKey}">View Details</button></td>
       `;
+
       customerList.appendChild(row);
     });
 
@@ -115,13 +120,13 @@ function showCustomerDetails(key) {
   onValue(customerRef, (snapshot) => {
     const customer = snapshot.val();
     const details = `
-      Name: ${customer.customerName}\n
-      Page Name: ${customer.pageName}\n
-      Package: ${customer.packageName}\n
-      Start Date: ${customer.startDate}\n
-      End Date: ${customer.endDate}\n
-      Package Days: ${customer.packageDays}\n
-      Package Price: ${customer.packagePrice}\n
+      Name: ${customer.customerName}
+      Page Name: ${customer.pageName}
+      Package: ${customer.packageName}
+      Start Date: ${customer.startDate}
+      End Date: ${customer.endDate}
+      Package Days: ${customer.packageDays}
+      Package Price: ${customer.packagePrice}
       Customer Paid: ${customer.customerPaid}
     `;
     popupText.textContent = details;
@@ -135,7 +140,6 @@ function showCustomerDetails(key) {
 
 // Generate PDF
 function generatePDF(details, customerName) {
-  const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   doc.text(`Customer Details: ${customerName}`, 10, 10);
   doc.text(details, 10, 20);
