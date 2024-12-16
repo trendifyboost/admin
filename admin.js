@@ -8,7 +8,7 @@ const firebaseConfig = {
   authDomain: "trendify-30126.firebaseapp.com",
   databaseURL: "https://trendify-30126-default-rtdb.firebaseio.com",
   projectId: "trendify-30126",
-  storageBucket: "trendify-30126.appspot.com",
+  storageBucket: "trendify-30126.firebasestorage.app",
   messagingSenderId: "816600328899",
   appId: "1:816600328899:web:4b01799c1e82e932451076",
   measurementId: "G-9QV2QDB3CG"
