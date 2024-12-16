@@ -109,22 +109,40 @@ window.viewCustomer = function (key) {
   get(ref(db, `customers/${key}`)).then(snapshot => {
     if (snapshot.exists()) {
       const customer = snapshot.val();
-      alert(`
-        Name: ${key}
-        Page: ${customer.pageName}
-        Package: ${customer.packageName}
-        Start Date: ${customer.startDate}
-        End Date: ${customer.endDate}
-        Package Days: ${customer.packageDays}
-        Package Price: ${customer.packagePrice}
-        Paid Amount: ${customer.customerPaid}
-        Remaining Amount: ${customer.remainingAmount} // এখানে বাকি টাকা দেখানো
-      `);
+      const popup = document.getElementById("popup-modal");
+      const popupText = document.getElementById("popup-text");
+
+      // Update the text with customer details
+      popupText.innerHTML = `
+        <strong>Name:</strong> ${key}<br>
+        <strong>Page:</strong> ${customer.pageName}<br>
+        <strong>Package:</strong> ${customer.packageName}<br>
+        <strong>Start Date:</strong> ${customer.startDate}<br>
+        <strong>End Date:</strong> ${customer.endDate}<br>
+        <strong>Package Days:</strong> ${customer.packageDays}<br>
+        <strong>Package Price:</strong> ${customer.packagePrice}<br>
+        <strong>Paid Amount:</strong> ${customer.customerPaid}<br>
+        <strong>Remaining Amount:</strong> ${customer.remainingAmount}
+      `;
+
+      // Display the modal
+      popup.style.display = "flex";
+
+      // Close the modal when the close button is clicked
+      document.querySelector(".close-button").onclick = () => {
+        popup.style.display = "none";
+      };
+
+      // Close the modal when clicked outside the content
+      window.onclick = (event) => {
+        if (event.target === popup) {
+          popup.style.display = "none";
+        }
+      };
     } else {
       alert("Customer data not found.");
     }
   }).catch(error => console.error("Error viewing customer:", error));
 };
-
 // Initial load
 loadCustomers();
