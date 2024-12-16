@@ -140,25 +140,16 @@ window.viewCustomer = function (key) {
       `;
 
       let downloadButton = document.getElementById("download-receipt-button");
-      if (!downloadButton) {
-        downloadButton = document.createElement("button");
-        downloadButton.id = "download-receipt-button";
-        downloadButton.innerText = "Print";
-        downloadButton.style.marginTop = "20px";       // পপআপ কন্টেন্টের নিচ থেকে ২০ পিক্সেল দূরে রাখা
-        downloadButton.style.padding = "5px 5px";
-        downloadButton.style.backgroundColor = "#4CAF50";
-        downloadButton.style.color = "white";
-        downloadButton.style.border = "none";
-        downloadButton.style.cursor = "pointer";
-        downloadButton.style.borderRadius = "5px";
-        downloadButton.style.fontSize = "16px";
-        downloadButton.style.display = "block";        // বাটনটিকে ব্লক এলিমেন্ট বানানো
-        downloadButton.style.marginLeft = "5px";      // বাটনটিকে কেন্দ্র করতে
-        downloadButton.style.marginRight = "0px";     // বাটনটিকে কেন্দ্র করতে
+if (!downloadButton) {
+  downloadButton = document.createElement("button");
+  downloadButton.id = "download-receipt-button";
+  downloadButton.innerText = "Print";
+  downloadButton.classList.add("download-button"); // Add a CSS class for styling
 
-        downloadButton.addEventListener("click", generateReceiptPDF);
-        popup.appendChild(downloadButton);
-      }
+  downloadButton.addEventListener("click", generateReceiptPDF);
+  popup.appendChild(downloadButton); // Ensure `popup` is a valid DOM element
+}
+
 
       popup.style.display = "flex";
 
