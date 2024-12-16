@@ -104,6 +104,21 @@ window.deleteCustomer = function (key) {
   });
 };
 
+// Generate Receipt PDF Function
+function generateReceiptPDF() {
+  const { jsPDF } = window.jspdf; // jsPDF এর রেফারেন্স পাওয়া
+  const pdf = new jsPDF();
+
+  // পপআপে থাকা তথ্যগুলো সংগ্রহ করা
+  const popupText = document.getElementById("popup-text").innerText;
+
+  // PDF এ কনটেন্ট যোগ করা
+  pdf.text(popupText, 10, 10);
+
+  // PDF ডাউনলোড করা
+  pdf.save("customer-receipt.pdf");
+}
+
 // View Customer Details
 window.viewCustomer = function (key) {
   get(ref(db, `customers/${key}`)).then(snapshot => {
