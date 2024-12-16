@@ -187,15 +187,6 @@ function generateReceiptPDF() {
 
   }).catch(error => console.error("Error viewing customer:", error));
 };
-function showModal() {
-    const modal = document.querySelector(".modal");
-    modal.style.display = "flex"; // Use flex to center it properly
-}
-
-function closeModal() {
-    const modal = document.querySelector(".modal");
-    modal.style.display = "none";
-}
 
 // Initial load
 loadCustomers();
