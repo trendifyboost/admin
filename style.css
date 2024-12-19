@@ -28,7 +28,7 @@ h1, h2 {
   display: inline-block;
 }
 
-.button ,#toggle-form-button {
+.button, #toggle-form-button {
   display: block;
   margin: 20px auto;
   padding: 10px 20px;
