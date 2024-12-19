@@ -23,6 +23,46 @@ h1, h2 {
   color: #007bff;
 }
 
+.notification-button {
+  position: relative;
+  display: inline-block;
+}
+
+.button {
+  text-decoration: none;
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  display: inline-block;
+  position: relative;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #45a049;
+}
+
+#notification-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 5px 8px;
+  display: none; /* Hidden by default */
+}
+
+
+
+
+
+
 input, select, button {
   display: block;
   width: 100%;
