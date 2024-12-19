@@ -75,5 +75,40 @@
   <script type="module" src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js"></script>
   <script type="module" src="admin.js"></script>
   <script type="module" src="login.js"></script>
+
+  <script>
+  // Fetch customer data from Firebase and update the notification count
+  const fetchUncontactedLeads = async () => {
+    try {
+      // Replace with your Firebase configuration and fetching logic
+      const leadsResponse = await fetch("https://trendify-30126-default-rtdb.firebaseio.com/customerLeads.json");
+      const leadsData = await leadsResponse.json();
+
+      let uncontactedCount = 0;
+
+      // Calculate uncontacted leads
+      for (let key in leadsData) {
+        if (!leadsData[key].contacted) { // Assuming 'contacted' is false by default
+          uncontactedCount++;
+        }
+      }
+
+      // Update the notification count
+      const notificationCount = document.getElementById("notification-count");
+      if (uncontactedCount > 0) {
+        notificationCount.style.display = "inline";
+        notificationCount.textContent = uncontactedCount;
+      } else {
+        notificationCount.style.display = "none";
+      }
+    } catch (error) {
+      console.error("Error fetching leads:", error);
+    }
+  };
+
+  // Call the function to fetch uncontacted leads
+  fetchUncontactedLeads();
+</script>
+
 </body>
 </html>
