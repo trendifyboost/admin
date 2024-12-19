@@ -26,23 +26,33 @@
 </div>
 
     <!-- Add Customer Section -->
-    <div id="add-customer-section">
-      <h2>Add Customer</h2>
-      <input type="text" id="customer-name" placeholder="Customer Name">
-      <input type="text" id="page-name" placeholder="Page Name">
-      <select id="package-name">
-        <option value="Boosting">Boosting</option>
-        <option value="Followers">Followers</option>
-        <option value="Likes">Likes</option>
-        <option value="Comments">Comments</option>
-        <option value="Custom Review">Custom Review</option>
-      </select>
-      <input type="date" id="start-date">
-      <input type="number" id="package-days" placeholder="Package Days">
-      <input type="number" id="package-price" placeholder="Package Price">
-      <input type="number" id="customer-paid" placeholder="Customer Paid">
-      <button id="add-customer-button">Add Customer</button>
-    </div>
+    <button id="toggle-form-button">Add Customer</button>
+<div id="customer-form-container" style="display: none;">
+  <form id="customer-form">
+    <label for="customer-name">Name:</label>
+    <input type="text" id="customer-name" required>
+
+    <label for="page-name">Page Name:</label>
+    <input type="text" id="page-name" required>
+
+    <label for="package-name">Package Name:</label>
+    <input type="text" id="package-name" required>
+
+    <label for="start-date">Start Date:</label>
+    <input type="date" id="start-date" required>
+
+    <label for="package-days">Package Days:</label>
+    <input type="number" id="package-days" required>
+
+    <label for="package-price">Package Price:</label>
+    <input type="number" step="0.01" id="package-price" required>
+
+    <label for="customer-paid">Customer Paid:</label>
+    <input type="number" step="0.01" id="customer-paid" required>
+
+    <button type="button" id="add-customer-button">Submit</button>
+  </form>
+</div>
 
 <!-- Customer Details Section -->
 <div id="customer-details-section">
