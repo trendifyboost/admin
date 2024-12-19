@@ -18,45 +18,55 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Add Customer Functionality
-document.getElementById("add-customer-button").addEventListener("click", () => {
-  const name = document.getElementById("customer-name").value.trim();
-  const pageName = document.getElementById("page-name").value.trim();
-  const packageName = document.getElementById("package-name").value;
-  const startDate = document.getElementById("start-date").value;
-  const packageDays = parseInt(document.getElementById("package-days").value);
-  const packagePrice = parseFloat(document.getElementById("package-price").value);
-  const customerPaid = parseFloat(document.getElementById("customer-paid").value);
+ // Toggle the form visibility
+  document.getElementById("toggle-form-button").addEventListener("click", () => {
+    const formContainer = document.getElementById("customer-form-container");
+    if (formContainer.style.display === "none" || formContainer.style.display === "") {
+      formContainer.style.display = "block"; // Show the form
+    } else {
+      formContainer.style.display = "none"; // Hide the form
+    }
+  });
 
-  if (!name || !pageName || !startDate || isNaN(packageDays) || isNaN(packagePrice) || isNaN(customerPaid)) {
-    alert("Please fill in all customer details correctly.");
-    return;
-  }
+  // Add Customer functionality
+  document.getElementById("add-customer-button").addEventListener("click", () => {
+    const name = document.getElementById("customer-name").value.trim();
+    const pageName = document.getElementById("page-name").value.trim();
+    const packageName = document.getElementById("package-name").value;
+    const startDate = document.getElementById("start-date").value;
+    const packageDays = parseInt(document.getElementById("package-days").value);
+    const packagePrice = parseFloat(document.getElementById("package-price").value);
+    const customerPaid = parseFloat(document.getElementById("customer-paid").value);
 
-  const remainingAmount = packagePrice - customerPaid; // কত টাকা বাকি আছে সেটি হিসাব
+    if (!name || !pageName || !startDate || isNaN(packageDays) || isNaN(packagePrice) || isNaN(customerPaid)) {
+      alert("Please fill in all customer details correctly.");
+      return;
+    }
 
-  const endDate = new Date(startDate);
-  endDate.setDate(endDate.getDate() + packageDays);
+    const remainingAmount = packagePrice - customerPaid;
 
-  const safeName = name.replace(/[^a-zA-Z0-9]/g, "_");
-  const customerRef = ref(db, `customers/${safeName}`);
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + packageDays);
 
-  set(customerRef, {
-    pageName,
-    packageName,
-    startDate,
-    packageDays,
-    packagePrice,
-    customerPaid,
-    remainingAmount, // বাকি টাকা ডাটাবেজে যোগ করুন
-    endDate: endDate.toISOString().split('T')[0]
-  })
-  .then(() => {
-    alert("Customer added successfully!");
-    loadCustomers();
-  })
-  .catch(error => console.error("Error adding customer:", error));
-});
+    const safeName = name.replace(/[^a-zA-Z0-9]/g, "_");
+    const customerRef = ref(db, `customers/${safeName}`);
+
+    set(customerRef, {
+      pageName,
+      packageName,
+      startDate,
+      packageDays,
+      packagePrice,
+      customerPaid,
+      remainingAmount,
+      endDate: endDate.toISOString().split('T')[0]
+    })
+    .then(() => {
+      alert("Customer added successfully!");
+      document.getElementById("customer-form-container").style.display = "none"; // Hide form after submission
+    })
+    .catch(error => console.error("Error adding customer:", error));
+  });
 // Load and Display Customers
 function loadCustomers() {
   const customerList = document.getElementById("customer-list");
