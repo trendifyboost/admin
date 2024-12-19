@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Leads</title>
+  <script type="module">
+    // Import Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyC5JTd88XMPaw8ThV8i4wh8r37uhSuuKiQ",
+      authDomain: "trendify-30126.firebaseapp.com",
+      databaseURL: "https://trendify-30126-default-rtdb.firebaseio.com",
+      projectId: "trendify-30126",
+      storageBucket: "trendify-30126.firebasestorage.app",
+      messagingSenderId: "816600328899",
+      appId: "1:816600328899:web:4b01799c1e82e932451076",
+      measurementId: "G-9QV2QDB3CG"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Function to fetch and display data
+    async function fetchCustomerLeads() {
+      const customerLeadsRef = ref(db, "customerLeads");
+      const snapshot = await get(customerLeadsRef);
+
+      if (snapshot.exists()) {
+        const leads = snapshot.val();
+        const tableBody = document.getElementById("customer-leads-body");
+
+        Object.keys(leads).forEach((key) => {
+          const lead = leads[key];
+          const row = document.createElement("tr");
+
+          // Add Name
+          const nameCell = document.createElement("td");
+          nameCell.textContent = lead.name || "N/A";
+          row.appendChild(nameCell);
+
+          // Add Phone Number
+          const phoneCell = document.createElement("td");
+          phoneCell.textContent = lead.phoneNumber || "N/A";
+          row.appendChild(phoneCell);
+
+          // Add Contact Method
+          const contactMethodCell = document.createElement("td");
+          contactMethodCell.textContent = lead.contactMethod || "N/A";
+          row.appendChild(contactMethodCell);
+
+          // Add Created At
+          const createdAtCell = document.createElement("td");
+          createdAtCell.textContent = new Date(lead.createdAt).toLocaleString() || "N/A";
+          row.appendChild(createdAtCell);
+
+          tableBody.appendChild(row);
+        });
+      } else {
+        console.log("No data available");
+      }
+    }
+
+    // Call the function after the DOM is fully loaded
+    document.addEventListener("DOMContentLoaded", fetchCustomerLeads);
+  </script>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    th {
+      background-color: #f4f4f4;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <h1>Customer Leads</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Phone Number</th>
+        <th>Contact Method</th>
+        <th>Created At</th>
+      </tr>
+    </thead>
+    <tbody id="customer-leads-body">
+      <!-- Data will be dynamically inserted here -->
+    </tbody>
+  </table>
+</body>
+</html>
