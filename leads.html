@@ -7,7 +7,7 @@
   <script type="module">
     // Import Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+    import { getDatabase, ref, get, update, remove } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
 
     // Firebase Configuration
     const firebaseConfig = {
@@ -33,9 +33,14 @@
       if (snapshot.exists()) {
         const leads = snapshot.val();
         const tableBody = document.getElementById("customer-leads-body");
+        tableBody.innerHTML = ""; // Clear existing rows
 
-        Object.keys(leads).forEach((key) => {
-          const lead = leads[key];
+        // Sort leads: uncontacted first
+        const sortedLeads = Object.entries(leads).sort(([keyA, leadA], [keyB, leadB]) => {
+          return (leadA.contacted ? 1 : 0) - (leadB.contacted ? 1 : 0);
+        });
+
+        sortedLeads.forEach(([key, lead]) => {
           const row = document.createElement("tr");
 
           // Add Name
@@ -58,6 +63,32 @@
           createdAtCell.textContent = new Date(lead.createdAt).toLocaleString() || "N/A";
           row.appendChild(createdAtCell);
 
+          // Add Contacted Status Button
+          const contactedCell = document.createElement("td");
+          const contactedButton = document.createElement("button");
+          contactedButton.textContent = lead.contacted ? "Contacted" : "Mark as Contacted";
+          contactedButton.style.backgroundColor = lead.contacted ? "#4CAF50" : "#f39c12";
+          contactedButton.style.color = "white";
+          contactedButton.addEventListener("click", async () => {
+            await update(ref(db, `customerLeads/${key}`), { contacted: !lead.contacted });
+            fetchCustomerLeads();
+          });
+          contactedCell.appendChild(contactedButton);
+          row.appendChild(contactedCell);
+
+          // Add Delete Button
+          const deleteCell = document.createElement("td");
+          const deleteButton = document.createElement("button");
+          deleteButton.textContent = "Delete";
+          deleteButton.style.backgroundColor = "#e74c3c";
+          deleteButton.style.color = "white";
+          deleteButton.addEventListener("click", async () => {
+            await remove(ref(db, `customerLeads/${key}`));
+            fetchCustomerLeads();
+          });
+          deleteCell.appendChild(deleteButton);
+          row.appendChild(deleteCell);
+
           tableBody.appendChild(row);
         });
       } else {
@@ -69,18 +100,111 @@
     document.addEventListener("DOMContentLoaded", fetchCustomerLeads);
   </script>
   <style>
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-    }
-    th {
-      background-color: #f4f4f4;
-      text-align: left;
-    }
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 20px;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+h1 {
+  text-align: center;
+  color: #444;
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+}
+
+th {
+  background-color: #4CAF50;
+  color: white;
+  font-size: 16px;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color: #f1f7f1;
+}
+
+td button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+td button:hover {
+  opacity: 0.8;
+}
+
+td button:active {
+  transform: scale(0.95);
+}
+
+td button:first-child {
+  margin-right: 8px;
+}
+
+@media screen and (max-width: 768px) {
+  body {
+    margin: 10px;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  table {
+    font-size: 14px;
+  }
+
+  th, td {
+    padding: 10px;
+  }
+
+  td button {
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  table {
+    font-size: 12px;
+  }
+
+  th, td {
+    padding: 8px;
+  }
+
+  td button {
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -92,6 +216,8 @@
         <th>Phone Number</th>
         <th>Contact Method</th>
         <th>Created At</th>
+        <th>Contacted</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody id="customer-leads-body">
